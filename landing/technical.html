@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareIntegrity.AI — Technical Architecture | Graph + AI Infrastructure</title>
+<meta name="description" content="Technical deep-dive into CareIntegrity.AI's 4-layer distributed intelligence system. Graph Neural Networks, temporal embeddings, constraint validation, and real-time risk scoring for NDIS-scale complexity.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0616;--bg2:#110c22;--card:#1a1232;--border:#2a1f4a;--pink:#ff2d8a;--cyan:#06d6a0;--blue:#3b82f6;--purple:#8b5cf6;--text:#e8e4f0;--muted:#8a82a6}
+body{font-family:'SF Mono',SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif}
+a{color:var(--pink);text-decoration:none}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);background:rgba(10,5,22,0.85);border-bottom:1px solid var(--border)}
+nav .logo{font-size:18px;font-weight:900;color:var(--pink)}nav .logo span{color:var(--text)}
+nav a.link{color:var(--muted);font-size:13px;font-weight:500;font-family:-apple-system,sans-serif}nav a.link:hover{color:var(--text)}
+.nav-btn{padding:8px 20px;background:var(--pink);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:-apple-system,sans-serif}
+
+section{padding:100px 24px}.container{max-width:1100px;margin:0 auto}
+.label{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:5px;margin-bottom:14px;background:rgba(255,45,138,0.1);color:var(--pink);border:1px solid rgba(255,45,138,0.2)}
+.title{font-size:clamp(28px,4vw,46px);font-weight:900;letter-spacing:-1.5px;margin-bottom:14px;line-height:1.1;color:var(--pink)}
+.desc{font-size:16px;color:var(--muted);max-width:600px;line-height:1.65;margin-bottom:40px;font-family:-apple-system,sans-serif}
+
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:100px}
+.hero-content{max-width:700px}
+.hero h1{font-size:clamp(36px,5vw,60px);font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:20px;color:var(--pink)}
+.hero p{font-size:17px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif;margin-bottom:32px}
+.stats-row{display:flex;gap:48px;flex-wrap:wrap;margin-top:40px}
+.stat .num{font-size:42px;font-weight:900;color:var(--text);letter-spacing:-1px}
+.stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:-apple-system,sans-serif;margin-top:4px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all 0.3s}
+.card:hover{border-color:var(--pink)}
+.card h3{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--pink)}
+.card p{font-size:14px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif}
+.card ul{list-style:none;padding:0;margin-top:12px}
+.card li{padding:6px 0;font-size:13px;color:var(--muted);border-bottom:1px solid rgba(42,31,74,0.5);font-family:-apple-system,sans-serif}
+.card li::before{content:'→ ';color:var(--pink)}
+
+.pyramid{display:flex;flex-direction:column;gap:8px;max-width:600px}
+.pyramid-layer{padding:16px 24px;border-radius:10px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;gap:16px;transition:all 0.3s}
+.pyramid-layer:hover{border-color:var(--pink);transform:translateX(8px)}
+.pyramid-layer .num{font-size:24px;font-weight:900;color:var(--pink);min-width:40px}
+.pyramid-layer h4{font-size:16px;font-weight:800;font-family:-apple-system,sans-serif}
+.pyramid-layer p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
+
+.callout{padding:20px 28px;border-radius:12px;border-left:3px solid var(--pink);background:rgba(255,45,138,0.04);font-size:14px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif;margin:24px 0}
+.callout strong{color:var(--pink)}
+
+.compare-table{width:100%;border-collapse:collapse;margin:24px 0}
+.compare-table th{font-size:13px;font-weight:800;padding:12px 16px;text-align:left;border-bottom:2px solid var(--border);color:var(--text);font-family:-apple-system,sans-serif}
+.compare-table td{font-size:13px;padding:10px 16px;border-bottom:1px solid rgba(42,31,74,0.3);color:var(--muted);font-family:-apple-system,sans-serif}
+.compare-table .yes{color:var(--cyan);font-weight:700}
+.compare-table .no{color:var(--muted);opacity:0.4}
+.compare-table .ltd{color:#f59e0b;font-weight:600}
+
+.output-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.output-card{padding:24px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all 0.3s}
+.output-card:hover{border-color:var(--cyan)}
+.output-card .icon{font-size:24px;margin-bottom:8px}
+.output-card h4{font-size:15px;font-weight:800;margin-bottom:4px;color:var(--cyan);font-family:-apple-system,sans-serif}
+.output-card p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
+
+.cta{text-align:center;padding:80px 24px}
+.cta h2{font-size:36px;font-weight:900;letter-spacing:-1.5px;color:var(--pink);margin-bottom:16px}
+.cta p{font-size:16px;color:var(--muted);margin-bottom:28px;font-family:-apple-system,sans-serif}
+.cta .btn{display:inline-block;padding:14px 36px;background:var(--pink);border-radius:10px;color:#fff;font-size:15px;font-weight:800;font-family:-apple-system,sans-serif;transition:all 0.2s}
+.cta .btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,45,138,0.25)}
+
+footer{padding:40px 24px;border-top:1px solid var(--border);text-align:center}
+footer p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
+
+@media(max-width:768px){.grid-2,.output-grid{grid-template-columns:1fr}.stats-row{gap:24px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <div style="display:flex;gap:24px;align-items:center">
+    <a href="index.html" class="link">Home</a>
+    <a href="#architecture" class="link">Architecture</a>
+    <a href="#layers" class="link">Layers</a>
+    <a href="https://demo.careintegrity.ai" class="nav-btn">Live Demo</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="label">Technical Architecture</div>
+    <h1>Graph + AI Infrastructure for Care System Integrity</h1>
+    <p>Real-time behavioral and network intelligence built for NDIS-scale complexity — designed to detect systemic risk across large-scale government care systems.</p>
+    <p>Technically, this is a <strong style="color:var(--pink)">dynamic, multi-relational graph system with temporal drift</strong> — not a flat relational dataset. Existing architecture was not designed for this complexity.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="num">750K</div><div class="lbl">Participants</div></div>
+      <div class="stat"><div class="num">270K</div><div class="lbl">Providers</div></div>
+      <div class="stat"><div class="num">~M+</div><div class="lbl">Monthly Transactions</div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)" id="problem">
+  <div class="container">
+    <div class="label">Core Problem</div>
+    <div class="title">Existing Architecture Is Not Graph-Aware</div>
+    <div class="grid-2">
+      <div class="pyramid">
+        <div class="pyramid-layer" style="opacity:0.5"><div class="num">3</div><div><h4>Batch Analytics</h4><p style="color:var(--muted)">POST-EVENT ONLY — No real-time detection</p></div></div>
+        <div class="pyramid-layer" style="opacity:0.65"><div class="num">2</div><div><h4>Rule Engines</h4><p style="color:var(--muted)">STATIC CONSTRAINTS — Lacks system-wide modeling</p></div></div>
+        <div class="pyramid-layer" style="opacity:0.8"><div class="num">1</div><div><h4>Relational Databases</h4><p style="color:var(--muted)">CLAIMS-CENTRIC — Lacks relationship context</p></div></div>
+      </div>
+      <div>
+        <h3 style="color:var(--pink);font-size:20px;margin-bottom:12px">What's Missing</h3>
+        <p style="font-size:15px;color:var(--muted);line-height:1.7;font-family:-apple-system,sans-serif;margin-bottom:16px">Current systems process transactions in isolation. There is no representation of:</p>
+        <ul style="list-style:none;padding:0">
+          <li style="padding:8px 0;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);font-family:-apple-system,sans-serif">→ System-wide relationships between providers, participants, and workers</li>
+          <li style="padding:8px 0;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);font-family:-apple-system,sans-serif">→ Temporal evolution of behavior over time</li>
+          <li style="padding:8px 0;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif">→ Emergent patterns across the network</li>
+        </ul>
+        <div class="callout"><strong>Fraud and inefficiency are emergent graph properties</strong> — invisible to row-level queries.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="insight">
+  <div class="container">
+    <div class="label">Key Insight</div>
+    <div class="title">Fraud & Inefficiency Are Emergent Properties of Graphs</div>
+    <div class="grid-2" style="margin-top:32px">
+      <div class="card"><h3 style="color:var(--cyan)">Node Interactions</h3><p>Hidden relationships between providers, participants, and workers create risk patterns invisible at the transaction level.</p></div>
+      <div class="card"><h3 style="color:var(--cyan)">Temporal Drift</h3><p>Gradual shifts in billing behavior, service mix, and growth trajectories signal systemic issues before they escalate.</p></div>
+      <div class="card"><h3 style="color:var(--cyan)">Network Clusters</h3><p>Collusive provider groups and synthetic behavior patterns form detectable community structures in the graph.</p></div>
+      <div class="card"><h3 style="color:var(--cyan)">Constraint Violations</h3><p>Physically impossible schedules — overlapping services, travel time gaps, staffing conflicts — reveal fabrication.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)" id="architecture">
+  <div class="container">
+    <div class="label">Solution Architecture</div>
+    <div class="title">A 4-Layer Distributed Intelligence System</div>
+    <div class="desc">Each layer adds a dimension of intelligence — from raw relationship mapping through temporal modeling, physical validation, and finally graph-based risk scoring.</div>
+    <div class="pyramid" style="max-width:100%">
+      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.15),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.3)"><div class="num">1</div><div style="flex:1"><h4>Care Graph</h4><p>Multi-relational dynamic graph. Entities: Providers, Participants, Workers, Services, Locations. Edges: Service delivery, billing relationships, shared staffing, co-location. Output: continuously updated knowledge graph of the care economy.</p></div></div>
+      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.12),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.25)"><div class="num">2</div><div style="flex:1"><h4>Temporal Engine</h4><p>Detects drift, not just anomalies — modeling behavioral fingerprint evolution over time. Time-series embeddings per provider, rolling baseline comparisons, gradual billing inflation detection, service mix drift (e.g., therapy → SIL expansion).</p></div></div>
+      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.09),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.2)"><div class="num">3</div><div style="flex:1"><h4>Constraint Validator</h4><p>A physics-based feasibility engine asking: "Is this care delivery physically possible?" Worker time capacity & schedule overlap detection, travel time feasibility between locations, service simultaneity constraints.</p></div></div>
+      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.06),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.15)"><div class="num">4</div><div style="flex:1"><h4>Graph AI Risk</h4><p>Graph Neural Networks, node embeddings (provider behavior vectors), unsupervised anomaly detection, community detection (Louvain / spectral clustering). Detects: collusive provider clusters, abnormal network centrality shifts, synthetic-looking provider behavior patterns.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="output">
+  <div class="container">
+    <div class="label">System Output</div>
+    <div class="title">Risk Intelligence APIs — Not Raw Flags</div>
+    <div class="output-grid" style="margin-top:32px">
+      <div class="output-card"><div class="icon">📊</div><h4>Provider Risk Score</h4><p>0–100 composite score aggregating all detection layers into a single actionable metric.</p></div>
+      <div class="output-card"><div class="icon">🔗</div><h4>Network Cluster Risk Index</h4><p>Community-level risk assessment for provider groups with shared infrastructure signals.</p></div>
+      <div class="output-card"><div class="icon">📈</div><h4>Behavioral Drift Score</h4><p>Temporal deviation from established baseline patterns — catching gradual fraud escalation.</p></div>
+      <div class="output-card"><div class="icon">⚠️</div><h4>Constraint Violation Events</h4><p>Physically impossible schedules flagged in real time with forensic evidence.</p></div>
+    </div>
+    <div class="callout">Integrates with NDIA systems via <strong>real-time API or batch pipelines</strong> — no rip-and-replace required.</div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)" id="compare">
+  <div class="container">
+    <div class="label">Vision</div>
+    <div class="title">From Claims System → Intelligence System</div>
+    <div class="grid-2" style="margin-top:32px">
+      <div>
+        <h3 style="color:var(--pink);font-size:18px;margin-bottom:16px;font-family:-apple-system,sans-serif">Why CareIntegrity.ai Wins</h3>
+        <table class="compare-table">
+          <thead><tr><th>Capability</th><th>Legacy</th><th>CareIntegrity.ai</th></tr></thead>
+          <tbody>
+            <tr><td>Transaction fraud detection</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Network-level detection</td><td class="no">✕</td><td class="yes">✓</td></tr>
+            <tr><td>Temporal behavior modeling</td><td class="no">✕</td><td class="yes">✓</td></tr>
+            <tr><td>Physical feasibility validation</td><td class="no">✕</td><td class="yes">✓</td></tr>
+            <tr><td>Graph intelligence</td><td class="no">✕</td><td class="yes">✓</td></tr>
+            <tr><td>Real-time risk scoring</td><td class="ltd">Limited</td><td class="yes">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="color:var(--pink);font-size:18px;margin-bottom:16px;font-family:-apple-system,sans-serif">Performance Impact</h3>
+        <ul style="list-style:none;padding:0">
+          <li style="padding:10px 0;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);font-family:-apple-system,sans-serif"><strong style="color:var(--cyan)">5–20× faster</strong> anomaly detection latency</li>
+          <li style="padding:10px 0;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);font-family:-apple-system,sans-serif">Reduced false positives via context-aware graph models</li>
+          <li style="padding:10px 0;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);font-family:-apple-system,sans-serif">Earlier detection of systemic fraud patterns</li>
+          <li style="padding:10px 0;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif">Improved audit targeting efficiency</li>
+        </ul>
+        <h3 style="color:var(--pink);font-size:18px;margin:24px 0 12px;font-family:-apple-system,sans-serif">Future Expansion</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif">Aged care · Health insurance · Social welfare · Global public sector infrastructure</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>See the Intelligence Layer in Action</h2>
+  <p>Live demo with 8 AI engines processing 98,966 claims across 60 providers in real-time.</p>
+  <a href="https://demo.careintegrity.ai" class="btn">Access Live Demo →</a>
+  <div style="margin-top:16px;font-size:13px;color:var(--muted);font-family:-apple-system,sans-serif">Login: admin / NDISAdmin2025!</div>
+</section>
+
+<footer>
+  <p>CareIntegrity.ai — Graph + AI Infrastructure for Care System Integrity</p>
+  <p style="margin-top:8px">&copy; 2026 Built in Australia</p>
+</footer>
+
+</body>
+</html>
