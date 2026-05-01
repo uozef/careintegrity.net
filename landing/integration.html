@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareIntegrity.AI -- Integration & DevOps Architecture</title>
+<meta name="description" content="Technical integration guide for system architects. AWS, Azure, Oracle, Snowflake, Active Directory, SSO, data persistence, CI/CD, and government-grade infrastructure patterns.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e07a1e'/><text x='50' y='68' text-anchor='middle' font-size='60' font-weight='900' fill='white'>CI</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fff;--bg2:#faf8f5;--bg3:#f5f0ea;--card:#fff;--card-alt:#fef7ed;--border:#e8dfd4;--orange:#e07a1e;--navy:#1a2744;--green:#0d8a5e;--blue:#3b6fb6;--red:#c93b3b;--purple:#6b5ca5;--text:#1a2744;--text2:#3d4f6a;--muted:#7a869a;--shadow:0 2px 16px rgba(26,39,68,0.06);--shadow-lg:0 8px 32px rgba(26,39,68,0.08)}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:var(--orange);text-decoration:none}a:hover{color:#c4650f}
+code{font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:13px;background:var(--bg2);padding:2px 6px;border-radius:4px;border:1px solid var(--border)}
+pre{background:var(--navy);color:#e8ecf4;padding:20px 24px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;margin:16px 0;font-family:'SF Mono',SFMono-Regular,Consolas,monospace}
+pre .comment{color:#6b7394}
+pre .key{color:#f59e3b}
+pre .val{color:#06d6a0}
+pre .str{color:#7db8ff}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 32px;height:64px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+nav .logo{font-size:20px;font-weight:900;color:var(--navy)}nav .logo span{color:var(--orange)}
+nav .links{display:flex;gap:20px;align-items:center}nav .links a{font-size:14px;color:var(--muted);font-weight:500}nav .links a:hover{color:var(--navy)}
+.nav-btn{padding:9px 22px;background:var(--orange);border:none;border-radius:8px;color:#fff !important;font-size:13px;font-weight:700}
+
+.hero{padding:120px 24px 60px;background:linear-gradient(180deg,#fef9f3,#fff)}
+.hero h1{font-size:clamp(28px,3.5vw,44px);font-weight:900;letter-spacing:-1.5px;color:var(--navy);margin-bottom:10px;max-width:800px}
+.hero h1 span{color:var(--orange)}
+.hero p{font-size:17px;color:var(--muted);max-width:700px;line-height:1.65;margin-bottom:24px}
+.hero .audience{display:inline-flex;gap:8px;flex-wrap:wrap}
+.hero .audience span{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;border:1px solid var(--border);background:#fff}
+
+.toc{padding:20px 24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:64px;z-index:50;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.toc a{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--border);background:#fff;transition:all 0.2s}
+.toc a:hover{background:var(--orange);color:#fff !important;border-color:var(--orange)}
+
+.container{max-width:1000px;margin:0 auto}
+section{padding:72px 24px;border-bottom:1px solid var(--border)}
+section:nth-child(even){background:var(--bg2)}
+.sec-label{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;padding:5px 14px;border-radius:6px;margin-bottom:14px;background:rgba(224,122,30,0.06);color:var(--orange);border:1px solid rgba(224,122,30,0.12)}
+.sec-title{font-size:clamp(24px,3vw,36px);font-weight:900;letter-spacing:-1px;margin-bottom:10px;color:var(--navy)}
+.sec-desc{font-size:16px;color:var(--muted);max-width:700px;line-height:1.65;margin-bottom:32px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.card{padding:24px;border-radius:14px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)}
+.card h3{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.card h3 .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle}
+.card h3 .badge.aws{background:rgba(255,153,0,0.1);color:#ff9900}
+.card h3 .badge.azure{background:rgba(0,120,212,0.1);color:#0078d4}
+.card h3 .badge.gcp{background:rgba(66,133,244,0.1);color:#4285f4}
+.card h3 .badge.oracle{background:rgba(255,0,0,0.08);color:#c74634}
+.card h3 .badge.snow{background:rgba(41,128,185,0.1);color:#29b5e8}
+.card p{font-size:14px;color:var(--muted);line-height:1.6}
+.card ul{list-style:none;padding:0;margin-top:8px}
+.card li{padding:5px 0;font-size:13px;color:var(--text2);border-bottom:1px solid rgba(232,223,212,0.5)}
+.card li::before{content:"-- ";color:var(--orange);font-weight:700}
+.card.alt{background:var(--card-alt);border-color:rgba(224,122,30,0.15)}
+
+.arch-diagram{padding:28px;border-radius:16px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px;text-align:center}
+.arch-diagram h3{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+
+.flow{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:12px 0}
+.flow-box{padding:10px 16px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid var(--border);background:#fff;min-width:100px;text-align:center}
+.flow-box.aws{border-color:rgba(255,153,0,0.3);background:rgba(255,153,0,0.04);color:#c77700}
+.flow-box.azure{border-color:rgba(0,120,212,0.3);background:rgba(0,120,212,0.04);color:#0078d4}
+.flow-box.snow{border-color:rgba(41,128,185,0.3);background:rgba(41,128,185,0.04);color:#29b5e8}
+.flow-box.oracle{border-color:rgba(199,70,52,0.3);background:rgba(199,70,52,0.04);color:#c74634}
+.flow-box.app{border-color:rgba(224,122,30,0.3);background:rgba(224,122,30,0.06);color:var(--orange);font-weight:800}
+.flow-box.green{border-color:rgba(13,138,94,0.3);background:rgba(13,138,94,0.04);color:var(--green)}
+.flow-arr{font-size:18px;color:var(--muted)}
+
+.callout{padding:18px 24px;border-radius:12px;border-left:3px solid var(--orange);background:var(--card-alt);font-size:14px;color:var(--text2);line-height:1.6;margin:20px 0}
+.callout strong{color:var(--orange)}
+.callout.green{border-left-color:var(--green);background:rgba(13,138,94,0.04)}
+.callout.green strong{color:var(--green)}
+
+.req-table{width:100%;border-collapse:collapse;margin:16px 0}
+.req-table th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);color:var(--muted)}
+.req-table td{font-size:13px;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+.req-table td:first-child{font-weight:700;color:var(--navy)}
+
+.cta-bar{text-align:center;padding:60px 24px;background:linear-gradient(180deg,var(--bg2),#fef7ed)}
+.cta-bar h2{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px;letter-spacing:-1px}
+.cta-bar a.btn{display:inline-block;padding:14px 32px;background:var(--orange);border-radius:10px;color:#fff !important;font-size:15px;font-weight:800;transition:all 0.2s;margin:4px}
+.cta-bar a.btn:hover{background:#c4650f;transform:translateY(-2px)}
+.cta-bar a.btn.outline{background:transparent;border:2px solid var(--border);color:var(--navy) !important}
+
+footer{padding:40px 24px;background:var(--navy);text-align:center}
+footer .logo{font-size:18px;font-weight:900;color:#fff;margin-bottom:8px}footer .logo span{color:var(--orange)}
+footer p{font-size:12px;color:rgba(255,255,255,0.5)}
+
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.flow{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="technical.html">Technical</a>
+    <a href="engines.html">Engines</a>
+    <a href="layers.html">Layers</a>
+    <a href="https://demo.careintegrity.ai" class="nav-btn">Live Demo</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="sec-label">DevOps & Integration Guide</div>
+  <h1>Enterprise Integration <span>Architecture</span></h1>
+  <p>Technical reference for system architects evaluating CareIntegrity.AI for government-scale deployment. Covers data source connectivity, identity management, persistence, CI/CD, and multi-cloud infrastructure patterns.</p>
+  <div class="audience">
+    <span>System Architects</span>
+    <span>DevOps Engineers</span>
+    <span>Solution Architects</span>
+    <span>Security Architects</span>
+    <span>Integration Leads</span>
+  </div>
+</div>
+
+<div class="toc">
+  <a href="#overview">Architecture</a>
+  <a href="#data">Data Sources</a>
+  <a href="#cloud">Cloud Storage</a>
+  <a href="#identity">Identity & SSO</a>
+  <a href="#persistence">Persistence</a>
+  <a href="#ai">AI/ML Pipeline</a>
+  <a href="#cicd">CI/CD</a>
+  <a href="#security">Security</a>
+  <a href="#monitoring">Monitoring</a>
+</div>
+
+<!-- ARCHITECTURE OVERVIEW -->
+<section id="overview">
+<div class="container">
+  <div class="sec-label">System Architecture</div>
+  <div class="sec-title">Multi-Cloud Reference Architecture</div>
+  <p class="sec-desc">CareIntegrity.AI is designed as a cloud-agnostic platform that integrates with existing government infrastructure. It can deploy on AWS, Azure, GCP, or on-premises -- connecting to any combination of data sources and identity providers.</p>
+
+  <div class="arch-diagram">
+    <h3>High-Level Integration Architecture</h3>
+    <div class="flow">
+      <div class="flow-box snow">Snowflake<br><small>Data Warehouse</small></div>
+      <div class="flow-box oracle">Oracle DB<br><small>Claims</small></div>
+      <div class="flow-box azure">Azure SQL<br><small>Providers</small></div>
+      <div class="flow-box aws">RDS / Redshift<br><small>Analytics</small></div>
+    </div>
+    <div class="flow-arr" style="font-size:14px;margin:8px 0">Data Ingestion Layer (Batch + Real-time)</div>
+    <div class="flow">
+      <div class="flow-box app">CareIntegrity.AI<br><small>8 Detection Engines</small></div>
+    </div>
+    <div class="flow-arr" style="font-size:14px;margin:8px 0">Output APIs + Event Streaming</div>
+    <div class="flow">
+      <div class="flow-box green">Risk Scores</div>
+      <div class="flow-box green">Alerts</div>
+      <div class="flow-box green">Reports</div>
+      <div class="flow-box green">Webhooks</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Deployment Options</h3>
+      <ul>
+        <li>AWS ECS/EKS with RDS, S3, SageMaker</li>
+        <li>Azure AKS with Azure SQL, Blob, Azure ML</li>
+        <li>GCP GKE with Cloud SQL, GCS, Vertex AI</li>
+        <li>On-premises Docker/Kubernetes behind government firewall</li>
+        <li>Hybrid: compute on-prem, data in cloud (or vice versa)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Infrastructure Requirements</h3>
+      <table class="req-table">
+        <tr><td>Compute</td><td>4+ vCPU, 16GB RAM (min), 8+ vCPU recommended</td></tr>
+        <tr><td>Storage</td><td>100GB SSD for application, scalable object storage for data</td></tr>
+        <tr><td>Network</td><td>VPC/VNet with private subnets, NAT gateway</td></tr>
+        <tr><td>Database</td><td>PostgreSQL 14+ or any supported RDBMS</td></tr>
+        <tr><td>Python</td><td>3.9+ with scientific computing packages</td></tr>
+        <tr><td>Node.js</td><td>18+ for frontend build</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- DATA SOURCES -->
+<section id="data">
+<div class="container">
+  <div class="sec-label">Data Integration</div>
+  <div class="sec-title">Connecting to Government Data Sources</div>
+  <p class="sec-desc">CareIntegrity.AI connects to any data source that holds NDIS claims, provider registrations, participant records, or workforce data. No data migration required -- connect to existing systems.</p>
+
+  <div class="grid-3">
+    <div class="card"><h3>Snowflake <span class="badge snow">Snowflake</span></h3><p>Native Snowflake connector with warehouse management.</p><ul><li>ODBC/JDBC and Python connector</li><li>Multi-cluster warehouse support</li><li>Time Travel for historical analysis</li><li>Secure Data Sharing between orgs</li><li>Role-based access with key-pair auth</li></ul>
+    <pre><span class="comment"># snowflake connection</span>
+<span class="key">SNOWFLAKE_ACCOUNT</span>=<span class="str">org.au-east-1</span>
+<span class="key">SNOWFLAKE_WAREHOUSE</span>=<span class="str">COMPUTE_WH</span>
+<span class="key">SNOWFLAKE_DATABASE</span>=<span class="str">NDIS_PROD</span>
+<span class="key">SNOWFLAKE_SCHEMA</span>=<span class="str">CLAIMS</span>
+<span class="key">SNOWFLAKE_AUTH</span>=<span class="str">keypair</span></pre></div>
+
+    <div class="card"><h3>AWS <span class="badge aws">AWS</span></h3><p>Full AWS ecosystem integration.</p><ul><li>RDS (PostgreSQL, MySQL, Oracle) via IAM auth</li><li>Redshift for analytics warehouse</li><li>S3 for invoice storage and ML models</li><li>SageMaker for model training/serving</li><li>Secrets Manager for credential rotation</li><li>CloudWatch for monitoring</li><li>VPC peering for private connectivity</li></ul></div>
+
+    <div class="card"><h3>Azure <span class="badge azure">Azure</span></h3><p>Native Azure service integration.</p><ul><li>Azure SQL Database / Managed Instance</li><li>Azure Data Lake Storage Gen2</li><li>Azure Blob Storage for documents</li><li>Azure Machine Learning endpoints</li><li>Azure Key Vault for secrets</li><li>Azure Monitor and Log Analytics</li><li>VNet integration with service endpoints</li></ul></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Oracle <span class="badge oracle">Oracle</span></h3><p>Enterprise Oracle database connectivity.</p><ul><li>Oracle Database 12c+ via cx_Oracle / python-oracledb</li><li>Oracle Autonomous Database (cloud)</li><li>Oracle Cloud Infrastructure (OCI) integration</li><li>TNS connection with wallet authentication</li><li>Real Application Clusters (RAC) support</li><li>Oracle Data Guard for DR scenarios</li></ul>
+    <pre><span class="comment"># oracle connection</span>
+<span class="key">ORACLE_DSN</span>=<span class="str">ndis-claims.oraclecloud.com:1521/CLAIMS_PDB</span>
+<span class="key">ORACLE_AUTH</span>=<span class="str">wallet</span>
+<span class="key">ORACLE_WALLET_DIR</span>=<span class="str">/opt/oracle/wallet</span></pre></div>
+
+    <div class="card"><h3>Generic Sources</h3><p>Connect to any data source via standard protocols.</p><ul><li>PostgreSQL, MySQL, SQL Server via SQLAlchemy</li><li>REST APIs with OAuth2, API Key, or mTLS</li><li>SFTP for batch file ingestion</li><li>Apache Kafka / AWS Kinesis for streaming</li><li>CSV/Parquet file import from any storage</li><li>GraphQL endpoints</li><li>SOAP/XML web services (legacy)</li></ul></div>
+  </div>
+
+  <div class="callout"><strong>Data stays in place.</strong> CareIntegrity.AI reads from source systems via secure connectors. No bulk data migration or ETL pipeline changes required. The system can operate in read-only mode against production databases with minimal query overhead.</div>
+</div>
+</section>
+
+<!-- CLOUD STORAGE -->
+<section id="cloud">
+<div class="container">
+  <div class="sec-label">Object Storage</div>
+  <div class="sec-title">Cloud Storage for Documents, Models & Archives</div>
+
+  <div class="arch-diagram">
+    <h3>Storage Architecture</h3>
+    <div class="flow">
+      <div class="flow-box aws">AWS S3<br><small>Invoices, PDFs</small></div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box app">CareIntegrity.AI<br><small>Processing</small></div>
+      <div class="flow-arr">&larr;</div>
+      <div class="flow-box azure">Azure Blob<br><small>Provider Docs</small></div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <div class="flow-box aws">S3 - Models</div>
+      <div class="flow-arr">&harr;</div>
+      <div class="flow-box app">ML Pipeline</div>
+      <div class="flow-arr">&harr;</div>
+      <div class="flow-box azure">ADLS Gen2</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card"><h3>AWS S3 <span class="badge aws">AWS</span></h3><ul><li>Server-side encryption (SSE-S3, SSE-KMS)</li><li>Bucket policies and IAM roles</li><li>S3 Select for in-place querying</li><li>Lifecycle rules for archival to Glacier</li><li>Cross-region replication for DR</li><li>Pre-signed URLs for secure access</li></ul></div>
+    <div class="card"><h3>Azure Storage <span class="badge azure">Azure</span></h3><ul><li>Blob Storage (hot, cool, archive tiers)</li><li>Data Lake Gen2 with hierarchical namespace</li><li>Azure AD RBAC on containers</li><li>Managed identity authentication</li><li>Immutable storage for compliance</li><li>Azure CDN for global distribution</li></ul></div>
+    <div class="card"><h3>GCS & Others <span class="badge gcp">GCP</span></h3><ul><li>Google Cloud Storage with uniform access</li><li>MinIO for on-premises S3-compatible storage</li><li>Ceph for distributed object storage</li><li>NetApp StorageGRID for enterprise</li><li>Any S3-compatible API supported</li></ul></div>
+  </div>
+</div>
+</section>
+
+<!-- IDENTITY & SSO -->
+<section id="identity">
+<div class="container">
+  <div class="sec-label">Identity Management</div>
+  <div class="sec-title">Active Directory, SSO & Federation</div>
+  <p class="sec-desc">CareIntegrity.AI integrates with enterprise identity providers for single sign-on, role mapping, and centralised user lifecycle management. No separate user database required in production.</p>
+
+  <div class="arch-diagram">
+    <h3>Identity Federation Architecture</h3>
+    <div class="flow">
+      <div class="flow-box azure">Azure AD<br><small>Primary IdP</small></div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box green">SAML 2.0 / OIDC</div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box app">CareIntegrity.AI<br><small>JWT Sessions</small></div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <div class="flow-box" style="border-color:rgba(107,92,165,0.3);color:var(--purple)">On-Prem AD<br><small>LDAP/LDAPS</small></div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box azure">AD Connect / ADFS</div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box app">CareIntegrity.AI</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Azure Active Directory <span class="badge azure">Azure AD</span></h3><p>Primary integration path for Australian government.</p><ul><li>SAML 2.0 SSO with automatic role mapping</li><li>OpenID Connect (OIDC) for modern auth</li><li>Azure AD groups mapped to CareIntegrity roles</li><li>Conditional Access policies honoured</li><li>Multi-factor authentication (MFA) enforced</li><li>Azure AD B2B for cross-org collaboration</li><li>Privileged Identity Management (PIM) for admin access</li></ul>
+    <pre><span class="comment"># Azure AD SAML configuration</span>
+<span class="key">SAML_ENTITY_ID</span>=<span class="str">https://careintegrity.ai</span>
+<span class="key">SAML_SSO_URL</span>=<span class="str">https://login.microsoftonline.com/{tenant}/saml2</span>
+<span class="key">SAML_CERT</span>=<span class="str">/etc/ssl/azure-ad-cert.pem</span>
+<span class="key">ROLE_MAPPING</span>=<span class="str">
+  AzureAD_FraudTeam  -> fraud_officer
+  AzureAD_Investigators -> investigator
+  AzureAD_Inspectors -> inspector
+  AzureAD_Analysts -> analyst
+  AzureAD_Admins -> admin</span></pre></div>
+
+    <div class="card"><h3>Other Identity Providers</h3><p>Compatible with any standards-based IdP.</p><ul><li>On-premises Active Directory via LDAP/LDAPS</li><li>AD FS (Active Directory Federation Services)</li><li>Okta (SAML 2.0 and OIDC)</li><li>Auth0 / Ping Identity / ForgeRock</li><li>AWS IAM Identity Center (SSO)</li><li>Google Workspace SAML</li><li>Keycloak (open-source, self-hosted)</li><li>Government-specific: myGovID, Digital Identity</li></ul>
+    <div class="callout green" style="margin-top:16px"><strong>Role-Based Access Control (RBAC):</strong> CareIntegrity.AI ships with 6 pre-defined roles (Admin, Fraud Officer, Investigator, Inspector, Analyst, Viewer) with 35+ granular permissions. These map directly to Active Directory groups for zero-touch provisioning and deprovisioning.</div></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>User Lifecycle Management</h3>
+    <table class="req-table">
+      <thead><tr><th>Capability</th><th>Implementation</th><th>Standard</th></tr></thead>
+      <tr><td>Provisioning</td><td>SCIM 2.0 auto-provisioning from Azure AD / Okta</td><td>RFC 7643/7644</td></tr>
+      <tr><td>Deprovisioning</td><td>Automatic disable on AD group removal</td><td>SCIM 2.0</td></tr>
+      <tr><td>Role Sync</td><td>AD group membership mapped to app roles every 5 min</td><td>SAML Assertions</td></tr>
+      <tr><td>MFA</td><td>Delegated to IdP (Azure AD, Okta) -- not managed in-app</td><td>FIDO2 / TOTP</td></tr>
+      <tr><td>Session Management</td><td>JWT tokens with configurable TTL, revocation via IdP</td><td>RFC 7519</td></tr>
+      <tr><td>Audit Trail</td><td>All auth events logged with user, IP, action, timestamp</td><td>ISO 27001</td></tr>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- PERSISTENCE -->
+<section id="persistence">
+<div class="container">
+  <div class="sec-label">Data Persistence</div>
+  <div class="sec-title">Application Database & State Management</div>
+  <p class="sec-desc">CareIntegrity.AI requires a persistence layer for application state, computed risk scores, audit logs, and investigation records. This is separate from the source data systems it reads from.</p>
+
+  <div class="grid-2">
+    <div class="card"><h3>Primary Database Options</h3><ul><li>PostgreSQL 14+ (recommended -- open source, JSONB, GIS)</li><li>AWS RDS PostgreSQL / Aurora</li><li>Azure Database for PostgreSQL Flexible Server</li><li>Google Cloud SQL for PostgreSQL</li><li>Oracle Database 19c+ (enterprise)</li><li>SQL Server 2019+ (Azure integration)</li></ul></div>
+    <div class="card"><h3>What Gets Persisted</h3><ul><li>Computed risk scores and alert history</li><li>Investigation records and case notes</li><li>Penalty and enforcement records</li><li>Watchlist entries and tip-offs</li><li>Audit logs (all user actions)</li><li>Custom rule definitions</li><li>Fine code configurations</li><li>User preferences and settings</li></ul></div>
+  </div>
+
+  <div class="card">
+    <h3>Cache & Session Layer</h3>
+    <table class="req-table">
+      <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+      <tr><td>Application Cache</td><td>Redis / ElastiCache / Azure Cache</td><td>Graph computation results, embeddings, baselines</td></tr>
+      <tr><td>Session Store</td><td>Redis / DynamoDB / Table Storage</td><td>JWT session metadata, CSRF tokens</td></tr>
+      <tr><td>Message Queue</td><td>RabbitMQ / SQS / Azure Service Bus</td><td>Async claim processing, alert delivery</td></tr>
+      <tr><td>Search Index</td><td>Elasticsearch / OpenSearch</td><td>Full-text search across entities and claims</td></tr>
+    </table>
+  </div>
+
+  <div class="callout"><strong>Stateless application tier.</strong> CareIntegrity.AI application servers are stateless -- all state lives in the database and cache layers. This enables horizontal scaling and zero-downtime deployments.</div>
+</div>
+</section>
+
+<!-- AI/ML -->
+<section id="ai">
+<div class="container">
+  <div class="sec-label">AI/ML Pipeline</div>
+  <div class="sec-title">Model Training, Serving & Integration</div>
+
+  <div class="arch-diagram">
+    <h3>ML Pipeline Architecture</h3>
+    <div class="flow">
+      <div class="flow-box snow">Training Data<br><small>Snowflake/S3</small></div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box aws">SageMaker / Azure ML<br><small>Training</small></div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box aws">Model Registry<br><small>S3 / MLflow</small></div>
+      <div class="flow-arr">&rarr;</div>
+      <div class="flow-box app">Inference API<br><small>Real-time scoring</small></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Model Training Platforms</h3><ul><li>AWS SageMaker (managed training and endpoints)</li><li>Azure Machine Learning (experiments and deployments)</li><li>Google Vertex AI (AutoML and custom training)</li><li>Databricks MLflow (experiment tracking)</li><li>Local training for sensitive government data</li><li>Federated learning for cross-agency models</li></ul></div>
+    <div class="card"><h3>Supported Model Formats</h3><ul><li>scikit-learn (joblib/pickle)</li><li>XGBoost / LightGBM native format</li><li>PyTorch (.pt) for GNN models</li><li>TensorFlow / Keras SavedModel</li><li>ONNX for cross-platform inference</li><li>Custom Python models with standard interface</li></ul></div>
+  </div>
+</div>
+</section>
+
+<!-- CI/CD -->
+<section id="cicd">
+<div class="container">
+  <div class="sec-label">DevOps</div>
+  <div class="sec-title">CI/CD, Infrastructure as Code & Deployment</div>
+
+  <div class="grid-2">
+    <div class="card"><h3>CI/CD Pipeline</h3><ul><li>GitHub Actions / Azure DevOps / GitLab CI</li><li>Automated testing (unit, integration, E2E)</li><li>Docker image build and registry push</li><li>Helm chart deployment to Kubernetes</li><li>Database migration management (Alembic)</li><li>Blue-green / canary deployment strategies</li><li>Automated rollback on health check failure</li></ul></div>
+    <div class="card"><h3>Infrastructure as Code</h3><ul><li>Terraform modules for AWS / Azure / GCP</li><li>Helm charts for Kubernetes deployment</li><li>Docker Compose for development/staging</li><li>Ansible playbooks for on-premises</li><li>CloudFormation templates (AWS-specific)</li><li>ARM templates / Bicep (Azure-specific)</li></ul></div>
+  </div>
+
+  <div class="card">
+    <h3>Container Architecture</h3>
+    <pre><span class="comment"># docker-compose.yml (production)</span>
+<span class="key">services:</span>
+  <span class="key">api:</span>
+    <span class="key">image:</span> <span class="str">careintegrity/api:latest</span>
+    <span class="key">replicas:</span> <span class="val">3</span>
+    <span class="key">resources:</span> <span class="str">4 vCPU, 8GB RAM</span>
+  <span class="key">worker:</span>
+    <span class="key">image:</span> <span class="str">careintegrity/worker:latest</span>
+    <span class="key">replicas:</span> <span class="val">2</span>
+    <span class="key">resources:</span> <span class="str">8 vCPU, 16GB RAM (GPU optional)</span>
+  <span class="key">redis:</span>
+    <span class="key">image:</span> <span class="str">redis:7-alpine</span>
+  <span class="key">postgres:</span>
+    <span class="key">image:</span> <span class="str">postgres:16</span>
+    <span class="key">volumes:</span> <span class="str">persistent</span></pre>
+  </div>
+</div>
+</section>
+
+<!-- SECURITY -->
+<section id="security">
+<div class="container">
+  <div class="sec-label">Security</div>
+  <div class="sec-title">Government-Grade Security Architecture</div>
+
+  <div class="grid-3">
+    <div class="card"><h3>Network Security</h3><ul><li>VPC / VNet isolation with private subnets</li><li>WAF (Web Application Firewall)</li><li>DDoS protection (Shield / Azure DDoS)</li><li>TLS 1.3 for all connections</li><li>mTLS for service-to-service</li><li>Network ACLs and security groups</li></ul></div>
+    <div class="card"><h3>Data Security</h3><ul><li>AES-256 encryption at rest</li><li>TLS 1.3 encryption in transit</li><li>Field-level encryption for PII</li><li>Key management (KMS / Key Vault)</li><li>Data masking for non-production</li><li>Automated PII detection and redaction</li></ul></div>
+    <div class="card"><h3>Compliance</h3><ul><li>SOC 2 Type II ready architecture</li><li>ISO 27001 aligned controls</li><li>Australian Privacy Principles (APP)</li><li>IRAP assessment ready</li><li>NIST 800-53 control mapping</li><li>Essential Eight alignment</li></ul></div>
+  </div>
+
+  <div class="callout green"><strong>PROTECTED-level capable.</strong> Architecture supports Australian Government PROTECTED classification when deployed within an accredited hosting environment with appropriate security controls, network segmentation, and personnel clearances.</div>
+</div>
+</section>
+
+<!-- MONITORING -->
+<section id="monitoring">
+<div class="container">
+  <div class="sec-label">Observability</div>
+  <div class="sec-title">Monitoring, Logging & Alerting</div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Monitoring Stack</h3><ul><li>Prometheus + Grafana dashboards</li><li>AWS CloudWatch / Azure Monitor</li><li>Application Performance Monitoring (APM)</li><li>Custom engine health metrics</li><li>Real-time claim processing throughput</li><li>Alert latency and false positive tracking</li></ul></div>
+    <div class="card"><h3>Logging & Audit</h3><ul><li>Structured JSON logging (ELK / Splunk)</li><li>Full audit trail of all user actions</li><li>SIEM integration (Splunk, QRadar, Sentinel)</li><li>Log retention configurable (365+ days)</li><li>Tamper-evident audit logs</li><li>SOC/NOC dashboard integration</li></ul></div>
+  </div>
+
+  <div class="card">
+    <h3>SLA Targets</h3>
+    <table class="req-table">
+      <thead><tr><th>Metric</th><th>Target</th><th>Measurement</th></tr></thead>
+      <tr><td>Availability</td><td>99.9% uptime</td><td>Synthetic monitoring + health endpoints</td></tr>
+      <tr><td>Claim Processing</td><td>< 500ms per claim</td><td>P95 latency from ingestion to risk score</td></tr>
+      <tr><td>Alert Generation</td><td>< 5 min from anomaly</td><td>Time from data arrival to alert dispatch</td></tr>
+      <tr><td>API Response</td><td>< 200ms P95</td><td>All REST endpoints under normal load</td></tr>
+      <tr><td>Recovery Time (RTO)</td><td>< 1 hour</td><td>Full system recovery from backup</td></tr>
+      <tr><td>Recovery Point (RPO)</td><td>< 15 minutes</td><td>Maximum data loss on failure</td></tr>
+    </table>
+  </div>
+</div>
+</section>
+
+<div class="cta-bar">
+  <h2>Ready to Evaluate?</h2>
+  <p style="font-size:16px;color:var(--muted);margin-bottom:16px">See the platform in action or request a technical architecture workshop for your deployment scenario.</p>
+  <a href="https://demo.careintegrity.ai" class="btn">Access Live Demo</a>
+  <a href="mailto:hello@careintegrity.ai" class="btn outline">Request Architecture Workshop</a>
+  <div style="margin-top:12px;font-size:13px;color:var(--muted)">Demo: admin / NDISAdmin2025!</div>
+</div>
+
+<footer>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <p>Enterprise Integration Architecture -- For System Architects</p>
+  <p style="margin-top:12px">&copy; 2026 CareIntegrity.ai -- Built in Australia</p>
+</footer>
+
+</body>
+</html>
