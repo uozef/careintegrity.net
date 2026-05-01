@@ -3,7 +3,7 @@ import { useApi, fetchApi } from '../hooks/useApi'
 
 function rotateY(x, y, z, a) { const c = Math.cos(a), s = Math.sin(a); return [x*c+z*s, y, -x*s+z*c] }
 function rotateX(x, y, z, a) { const c = Math.cos(a), s = Math.sin(a); return [x, y*c-z*s, y*s+z*c] }
-function project(x, y, z, w, h, fov) { const s = fov/(fov+z+300); return { x: w/2+x*s, y: h/2+y*s, scale: s, z } }
+function project(x, y, z, w, h, fov) { const d = fov+z+300; const s = d > 50 ? fov/d : fov/50; return { x: w/2+x*s, y: h/2+y*s, scale: Math.max(0.1, Math.min(3, s)), z } }
 
 export default function CollusionMap() {
   const canvasRef = useRef(null)
@@ -106,13 +106,14 @@ export default function CollusionMap() {
       const bg = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim()||'#0a0c14'
       ctx.fillStyle = bg; ctx.fillRect(0,0,W,H)
 
-      // Project all nodes
+      // Project all nodes — zoom adjusts FOV (closer/farther camera)
       const proj = {}
+      const effectiveFov = fov / zoom
       nodes.forEach(n => {
         const p=p3[n.id]
-        let [rx,ry,rz]=rotateY(p.x*zoom, p.y*zoom, p.z*zoom, rot.angleY)
+        let [rx,ry,rz]=rotateY(p.x, p.y, p.z, rot.angleY)
         ;[rx,ry,rz]=rotateX(rx,ry,rz, rot.angleX)
-        proj[n.id] = project(rx,ry,rz,W,H,fov)
+        proj[n.id] = project(rx,ry,rz,W,H,effectiveFov)
       })
       projectedRef.current = proj
 
@@ -262,7 +263,7 @@ export default function CollusionMap() {
     function onUp() { dragRef.current.dragging=false }
     function onWheel(e) {
       e.preventDefault()
-      zoomRef.current=Math.max(0.3,Math.min(4,zoomRef.current*(e.deltaY<0?1.1:0.9)))
+      zoomRef.current=Math.max(0.5,Math.min(2.5,zoomRef.current*(e.deltaY<0?1.08:0.92)))
     }
 
     canvas.addEventListener('mousemove',onMove)
