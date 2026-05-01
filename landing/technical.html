@@ -8,13 +8,13 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0616;--bg2:#110c22;--card:#1a1232;--border:#2a1f4a;--pink:#ff2d8a;--cyan:#06d6a0;--blue:#3b82f6;--purple:#8b5cf6;--text:#e8e4f0;--muted:#8a82a6}
+:root{--bg:#ffffff;--bg2:#faf8f5;--card:#ffffff;--border:#e8dfd4;--pink:#e07a1e;--cyan:#0d8a5e;--blue:#3b6fb6;--purple:#6b5ca5;--text:#1a2744;--muted:#7a869a;--shadow:0 2px 16px rgba(26,39,68,0.06)}
 body{font-family:'SF Mono',SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 h1,h2,h3,h4{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif}
 a{color:var(--pink);text-decoration:none}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);background:rgba(10,5,22,0.85);border-bottom:1px solid var(--border)}
-nav .logo{font-size:18px;font-weight:900;color:var(--pink)}nav .logo span{color:var(--text)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(16px);background:rgba(255,255,255,0.92);border-bottom:1px solid var(--border)}
+nav .logo{font-size:18px;font-weight:900;color:var(--text)}nav .logo span{color:var(--pink)}
 nav a.link{color:var(--muted);font-size:13px;font-weight:500;font-family:-apple-system,sans-serif}nav a.link:hover{color:var(--text)}
 .nav-btn{padding:8px 20px;background:var(--pink);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:-apple-system,sans-serif}
 
@@ -32,7 +32,7 @@ section{padding:100px 24px}.container{max-width:1100px;margin:0 auto}
 .stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:-apple-system,sans-serif;margin-top:4px}
 
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all 0.3s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all 0.3s;box-shadow:var(--shadow)}
 .card:hover{border-color:var(--pink)}
 .card h3{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--pink)}
 .card p{font-size:14px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif}
@@ -41,13 +41,13 @@ section{padding:100px 24px}.container{max-width:1100px;margin:0 auto}
 .card li::before{content:'→ ';color:var(--pink)}
 
 .pyramid{display:flex;flex-direction:column;gap:8px;max-width:600px}
-.pyramid-layer{padding:16px 24px;border-radius:10px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;gap:16px;transition:all 0.3s}
+.pyramid-layer{padding:16px 24px;border-radius:10px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;gap:16px;transition:all 0.3s;box-shadow:var(--shadow)}
 .pyramid-layer:hover{border-color:var(--pink);transform:translateX(8px)}
 .pyramid-layer .num{font-size:24px;font-weight:900;color:var(--pink);min-width:40px}
 .pyramid-layer h4{font-size:16px;font-weight:800;font-family:-apple-system,sans-serif}
 .pyramid-layer p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
 
-.callout{padding:20px 28px;border-radius:12px;border-left:3px solid var(--pink);background:rgba(255,45,138,0.04);font-size:14px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif;margin:24px 0}
+.callout{padding:20px 28px;border-radius:12px;border-left:3px solid var(--pink);background:rgba(224,122,30,0.04);font-size:14px;color:var(--muted);line-height:1.6;font-family:-apple-system,sans-serif;margin:24px 0}
 .callout strong{color:var(--pink)}
 
 .compare-table{width:100%;border-collapse:collapse;margin:24px 0}
@@ -58,20 +58,21 @@ section{padding:100px 24px}.container{max-width:1100px;margin:0 auto}
 .compare-table .ltd{color:#f59e0b;font-weight:600}
 
 .output-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.output-card{padding:24px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all 0.3s}
+.output-card{padding:24px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all 0.3s;box-shadow:var(--shadow)}
 .output-card:hover{border-color:var(--cyan)}
 .output-card .icon{font-size:24px;margin-bottom:8px}
 .output-card h4{font-size:15px;font-weight:800;margin-bottom:4px;color:var(--cyan);font-family:-apple-system,sans-serif}
 .output-card p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
 
-.cta{text-align:center;padding:80px 24px}
-.cta h2{font-size:36px;font-weight:900;letter-spacing:-1.5px;color:var(--pink);margin-bottom:16px}
+.cta{text-align:center;padding:80px 24px;background:linear-gradient(180deg,var(--bg2),#fef7ed)}
+.cta h2{font-size:36px;font-weight:900;letter-spacing:-1.5px;color:var(--text);margin-bottom:16px}
+.cta h2 span{color:var(--pink)}
 .cta p{font-size:16px;color:var(--muted);margin-bottom:28px;font-family:-apple-system,sans-serif}
 .cta .btn{display:inline-block;padding:14px 36px;background:var(--pink);border-radius:10px;color:#fff;font-size:15px;font-weight:800;font-family:-apple-system,sans-serif;transition:all 0.2s}
-.cta .btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,45,138,0.25)}
+.cta .btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(224,122,30,0.2)}
 
-footer{padding:40px 24px;border-top:1px solid var(--border);text-align:center}
-footer p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
+footer{padding:40px 24px;background:#1a2744;text-align:center}
+footer p{font-size:12px;color:rgba(255,255,255,0.5);font-family:-apple-system,sans-serif}
 
 @media(max-width:768px){.grid-2,.output-grid{grid-template-columns:1fr}.stats-row{gap:24px}}
 </style>
@@ -145,10 +146,10 @@ footer p{font-size:12px;color:var(--muted);font-family:-apple-system,sans-serif}
     <div class="title">A 4-Layer Distributed Intelligence System</div>
     <div class="desc">Each layer adds a dimension of intelligence — from raw relationship mapping through temporal modeling, physical validation, and finally graph-based risk scoring.</div>
     <div class="pyramid" style="max-width:100%">
-      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.15),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.3)"><div class="num">1</div><div style="flex:1"><h4>Care Graph</h4><p>Multi-relational dynamic graph. Entities: Providers, Participants, Workers, Services, Locations. Edges: Service delivery, billing relationships, shared staffing, co-location. Output: continuously updated knowledge graph of the care economy.</p></div></div>
-      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.12),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.25)"><div class="num">2</div><div style="flex:1"><h4>Temporal Engine</h4><p>Detects drift, not just anomalies — modeling behavioral fingerprint evolution over time. Time-series embeddings per provider, rolling baseline comparisons, gradual billing inflation detection, service mix drift (e.g., therapy → SIL expansion).</p></div></div>
-      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.09),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.2)"><div class="num">3</div><div style="flex:1"><h4>Constraint Validator</h4><p>A physics-based feasibility engine asking: "Is this care delivery physically possible?" Worker time capacity & schedule overlap detection, travel time feasibility between locations, service simultaneity constraints.</p></div></div>
-      <div class="pyramid-layer" style="background:linear-gradient(90deg,rgba(255,45,138,0.06),rgba(255,45,138,0.02));border-color:rgba(255,45,138,0.15)"><div class="num">4</div><div style="flex:1"><h4>Graph AI Risk</h4><p>Graph Neural Networks, node embeddings (provider behavior vectors), unsupervised anomaly detection, community detection (Louvain / spectral clustering). Detects: collusive provider clusters, abnormal network centrality shifts, synthetic-looking provider behavior patterns.</p></div></div>
+      <div class="pyramid-layer" style="background:rgba(224,122,30,0.04);border-color:rgba(224,122,30,0.2)"><div class="num">1</div><div style="flex:1"><h4>Care Graph</h4><p>Multi-relational dynamic graph. Entities: Providers, Participants, Workers, Services, Locations. Edges: Service delivery, billing relationships, shared staffing, co-location. Output: continuously updated knowledge graph of the care economy.</p></div></div>
+      <div class="pyramid-layer" style="background:rgba(224,122,30,0.03);border-color:rgba(224,122,30,0.15)"><div class="num">2</div><div style="flex:1"><h4>Temporal Engine</h4><p>Detects drift, not just anomalies — modeling behavioral fingerprint evolution over time. Time-series embeddings per provider, rolling baseline comparisons, gradual billing inflation detection, service mix drift (e.g., therapy → SIL expansion).</p></div></div>
+      <div class="pyramid-layer" style="background:rgba(224,122,30,0.02);border-color:rgba(224,122,30,0.12)"><div class="num">3</div><div style="flex:1"><h4>Constraint Validator</h4><p>A physics-based feasibility engine asking: "Is this care delivery physically possible?" Worker time capacity & schedule overlap detection, travel time feasibility between locations, service simultaneity constraints.</p></div></div>
+      <div class="pyramid-layer" style="border-color:rgba(224,122,30,0.1)"><div class="num">4</div><div style="flex:1"><h4>Graph AI Risk</h4><p>Graph Neural Networks, node embeddings (provider behavior vectors), unsupervised anomaly detection, community detection (Louvain / spectral clustering). Detects: collusive provider clusters, abnormal network centrality shifts, synthetic-looking provider behavior patterns.</p></div></div>
     </div>
   </div>
 </section>
