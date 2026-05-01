@@ -279,7 +279,7 @@ export default function UserManagement() {
       {activeTab === 'roles' && (
         <div className="engine-grid">
           {Object.entries(roles || {}).map(([key, info]) => (
-            <div key={key} className="engine-card" style={{ borderLeft: `3px solid ${ROLE_COLORS[key] || '#666'}` }}>
+            <div key={key} className="engine-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: `${ROLE_COLORS[key]}20`, color: ROLE_COLORS[key],
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14 }}>

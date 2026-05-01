@@ -44,42 +44,42 @@ export default function FinancialTracker() {
       </div>
 
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-red)' }}>
+        <div className="stat-card">
           <div className="stat-label">Fraud Detected</div>
           <div className="stat-value critical count-up">{formatMoney(summary?.total_fraud_detected_value)}</div>
           <div className="stat-sub">Total suspicious claim value</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-orange)' }}>
+        <div className="stat-card">
           <div className="stat-label">Penalties Issued</div>
           <div className="stat-value high count-up">{formatMoney(summary?.total_penalties_issued)}</div>
           <div className="stat-sub">{summary?.penalty_count || 0} penalties total</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-green)' }}>
+        <div className="stat-card">
           <div className="stat-label">Collected</div>
           <div className="stat-value success count-up">{formatMoney(summary?.total_penalties_paid)}</div>
           <div className="stat-sub">{summary?.penalties_paid_count || 0} paid</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-yellow)' }}>
+        <div className="stat-card">
           <div className="stat-label">Pending</div>
           <div className="stat-value warning count-up">{formatMoney(summary?.total_penalties_pending)}</div>
           <div className="stat-sub">{summary?.penalties_pending_count || 0} awaiting</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-red)' }}>
+        <div className="stat-card">
           <div className="stat-label">Disputed</div>
           <div className="stat-value critical count-up">{formatMoney(summary?.total_penalties_disputed)}</div>
           <div className="stat-sub">{summary?.penalties_disputed_count || 0} disputes</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-cyan)' }}>
+        <div className="stat-card">
           <div className="stat-label">Collection Rate</div>
           <div className="stat-value cyan count-up">{summary?.collection_rate || 0}%</div>
           <div className="stat-sub">Of total issued</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-green)' }}>
+        <div className="stat-card">
           <div className="stat-label">Total Savings</div>
           <div className="stat-value success count-up">{formatMoney(summary?.total_savings_recovered)}</div>
           <div className="stat-sub">Recovered + prevented</div>
         </div>
-        <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-purple)' }}>
+        <div className="stat-card">
           <div className="stat-label">Overdue</div>
           <div className="stat-value critical count-up">{formatMoney(summary?.total_penalties_overdue)}</div>
           <div className="stat-sub">Past due date</div>

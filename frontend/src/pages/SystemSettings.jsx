@@ -218,7 +218,7 @@ export default function SystemSettings() {
 
           <div className="engine-grid">
             {Object.entries(config.aiModels).map(([key, model]) => (
-              <div key={key} className="engine-card" style={{ borderLeft: `3px solid ${STATUS_COLORS[model.status]}` }}>
+              <div key={key} className="engine-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div>
                     <div style={{ fontSize: 16, fontWeight: 800 }}>{model.name}</div>

@@ -354,7 +354,7 @@ export default function Investigation() {
 
           {/* Analysis Results */}
           {analysisResult && (
-            <div className="card fade-in" style={{ marginBottom: 16, borderLeft: `3px solid ${analysisResult.risk_score > 0.6 ? 'var(--accent-red)' : analysisResult.risk_score > 0.3 ? 'var(--accent-orange)' : 'var(--accent-green)'}` }}>
+            <div className="card fade-in" style={{ marginBottom: 16,}}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <div className="card-title" style={{ marginBottom: 0 }}>Analysis Result</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: analysisResult.risk_score > 0.6 ? 'var(--accent-red)' : 'var(--accent-green)' }}>
@@ -448,7 +448,7 @@ export default function Investigation() {
                         style={{
                           display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', cursor: 'pointer',
                           background: isSelected ? 'rgba(139,92,246,0.06)' : 'transparent',
-                          borderBottom: '1px solid var(--border)', borderLeft: isSelected ? '3px solid var(--accent-purple)' : '3px solid transparent',
+                          borderBottom: '1px solid var(--border)', 
                           transition: 'all 0.15s',
                         }}
                         onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'var(--bg-hover)' }}
@@ -472,7 +472,7 @@ export default function Investigation() {
 
                       {/* Expanded participant detail */}
                       {isSelected && (
-                        <div className="fade-in" style={{ padding: '16px 14px', background: 'var(--bg-secondary)', borderBottom: '2px solid var(--accent-purple)', borderLeft: '3px solid var(--accent-purple)' }}>
+                        <div className="fade-in" style={{ padding: '16px 14px', background: 'var(--bg-secondary)', borderBottom: '2px solid var(--accent-purple)' }}>
                           {loadingServices ? (
                             <div style={{ padding: 20, textAlign: 'center', color: 'var(--text-muted)' }}><div className="loading-spinner" style={{ margin: '0 auto 8px', width: 20, height: 20 }} />Loading...</div>
                           ) : serviceData ? (

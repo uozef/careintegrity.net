@@ -31,7 +31,7 @@ export default function SystemHealth() {
       <div className="card"><div className="card-title">Detection Engines ({data.engines?.length})</div>
         <div className="engine-grid">
           {data.engines?.map((e, i) => (
-            <div key={i} className="engine-card" style={{ borderLeft: '3px solid var(--accent-green)' }}>
+            <div key={i} className="engine-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>{e.name}</div>
                 <span className="engine-status">{e.status}</span>
