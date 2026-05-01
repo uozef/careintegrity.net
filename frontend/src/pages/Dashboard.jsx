@@ -28,7 +28,7 @@ export default function Dashboard({ onNavigate }) {
         <p>NDIS Network Integrity Graph + Behavioural Drift Engine &mdash; Real-time fraud intelligence</p>
       </div>
 
-      <div className="stats-grid">
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         <div className="stat-card">
           <div className="stat-label">Providers Monitored</div>
           <div className="stat-value info count-up">{summary.total_providers}</div>

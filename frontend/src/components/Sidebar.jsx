@@ -7,6 +7,7 @@ const NAV_ITEMS = [
     items: [
       { id: 'dashboard', icon: '\u2302', label: 'Dashboard' },
       { id: 'alerts', icon: '\u26A0', label: 'Alerts', badge: true },
+      { id: 'executive-report', icon: '\u2637', label: 'Executive Report' },
       { id: 'engines', icon: '\u2699', label: 'Detection Engines' },
     ]
   },
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
     section: 'Intelligence',
     items: [
       { id: 'network', icon: '\u25C8', label: 'Network Graph' },
+      { id: 'risk-heatmap', icon: '\u2600', label: 'Risk Heatmap' },
       { id: 'providers', icon: '\u2616', label: 'Providers' },
       { id: 'drift', icon: '\u2197', label: 'Behavioural Drift' },
       { id: 'time-budget', icon: '\u23F0', label: 'Time Budget' },
@@ -23,11 +25,31 @@ const NAV_ITEMS = [
     ]
   },
   {
+    section: 'Investigation',
+    items: [
+      { id: 'fraud-cases', icon: '\u2620', label: 'Fraud Cases' },
+      { id: 'investigation', icon: '\u2609', label: 'Provider Explorer' },
+      { id: 'search', icon: '\u2315', label: 'Search Portal' },
+      { id: 'service-codes', icon: '\u2261', label: 'Service Codes' },
+      { id: 'watchlist', icon: '\u2691', label: 'Watchlist' },
+      { id: 'tipoffs', icon: '\u2709', label: 'Whistleblower' },
+    ]
+  },
+  {
     section: 'Enforcement',
     items: [
       { id: 'penalties', icon: '\u2696', label: 'Penalties', badgeKey: 'penalties' },
       { id: 'fine-codes', icon: '\u2630', label: 'Fine Codes' },
       { id: 'financial', icon: '\u0024', label: 'Financial Tracker' },
+      { id: 'rules', icon: '\u2263', label: 'Rule Engine' },
+    ]
+  },
+  {
+    section: 'Administration',
+    items: [
+      { id: 'users', icon: '\u263A', label: 'User Management' },
+      { id: 'compliance', icon: '\u2611', label: 'Compliance' },
+      { id: 'system-health', icon: '\u2665', label: 'System Health' },
     ]
   }
 ]

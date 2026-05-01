@@ -194,7 +194,7 @@ def detect_behavioural_mutations(embeddings):
             # Euclidean distance
             euclidean_dist = float(np.linalg.norm(curr - prev))
 
-            if cosine_dist > 0.3 or euclidean_dist > 1.5:
+            if cosine_dist > 0.04 or euclidean_dist > 0.4:
                 # Identify what changed most
                 diff = curr - prev
                 top_changes = sorted(
@@ -203,7 +203,7 @@ def detect_behavioural_mutations(embeddings):
 
                 alerts.append({
                     "type": "behavioural_mutation",
-                    "severity": "critical" if cosine_dist > 0.5 else "high",
+                    "severity": "critical" if cosine_dist > 0.08 else "high" if cosine_dist > 0.05 else "medium",
                     "title": f"{pid}: Dramatic behaviour shift ({months[i-2]} → {months[i]})",
                     "description": (
                         f"Provider DNA changed significantly: cosine distance={cosine_dist:.3f}, "
@@ -214,7 +214,7 @@ def detect_behavioural_mutations(embeddings):
                     "to_period": months[i],
                     "cosine_distance": round(cosine_dist, 4),
                     "euclidean_distance": round(euclidean_dist, 4),
-                    "confidence": min(0.95, 0.5 + cosine_dist),
+                    "confidence": min(0.95, 0.5 + cosine_dist * 5),
                 })
 
     alerts.sort(key=lambda x: x.get("cosine_distance", 0), reverse=True)
@@ -258,7 +258,7 @@ def detect_cluster_anomalies(embeddings, fraud_provider_ids=None):
             if fpid not in fraud_provider_ids:
                 continue
             sim = float(sim_matrix[i][j])
-            if sim > 0.85:
+            if sim > 0.70:
                 alerts.append({
                     "type": "cluster_anomaly",
                     "severity": "high",
@@ -276,7 +276,7 @@ def detect_cluster_anomalies(embeddings, fraud_provider_ids=None):
 
 
 def get_embedding_visualization_data(embeddings):
-    """Reduce embeddings to 2D for visualization using simple PCA."""
+    """Reduce embeddings to 2D using PCA + force-spread for better distribution."""
     pids = list(embeddings.keys())
     if len(pids) < 3:
         return []
@@ -297,7 +297,15 @@ def get_embedding_visualization_data(embeddings):
     vectors = [v + [0] * (max_len - len(v)) for v in vectors]
 
     X = np.array(vectors)
-    # Simple PCA to 2D
+
+    # Normalize each feature to [0,1] to prevent single features dominating
+    for col in range(X.shape[1]):
+        col_min = X[:, col].min()
+        col_max = X[:, col].max()
+        if col_max - col_min > 1e-8:
+            X[:, col] = (X[:, col] - col_min) / (col_max - col_min)
+
+    # PCA to 2D
     X_centered = X - X.mean(axis=0)
     try:
         cov = np.cov(X_centered.T)
@@ -308,12 +316,43 @@ def get_embedding_visualization_data(embeddings):
     except np.linalg.LinAlgError:
         return []
 
+    # Normalize to [-1, 1]
+    for dim in range(2):
+        col = X_2d[:, dim]
+        vmin, vmax = col.min(), col.max()
+        if vmax - vmin > 1e-8:
+            X_2d[:, dim] = 2.0 * (col - vmin) / (vmax - vmin) - 1.0
+
+    # Force-spread: push overlapping points apart (like t-SNE repulsion)
+    positions = X_2d.copy()
+    for iteration in range(80):
+        alpha = 0.05 * (1 - iteration / 80)
+        for i in range(len(positions)):
+            for j in range(i + 1, len(positions)):
+                dx = positions[j][0] - positions[i][0]
+                dy = positions[j][1] - positions[i][1]
+                dist = math.sqrt(dx * dx + dy * dy) + 1e-6
+                # Repel if too close (< 0.12 in normalized space)
+                if dist < 0.15:
+                    force = alpha * (0.15 - dist) / dist
+                    positions[i][0] -= dx * force
+                    positions[i][1] -= dy * force
+                    positions[j][0] += dx * force
+                    positions[j][1] += dy * force
+
+    # Final normalize to [-1, 1]
+    for dim in range(2):
+        col = positions[:, dim]
+        vmin, vmax = col.min(), col.max()
+        if vmax - vmin > 1e-8:
+            positions[:, dim] = 2.0 * (col - vmin) / (vmax - vmin) - 1.0
+
     result = []
     for i, pid in enumerate(valid_pids):
         result.append({
             "provider_id": pid,
-            "x": round(float(X_2d[i][0]), 4),
-            "y": round(float(X_2d[i][1]), 4),
+            "x": round(float(positions[i][0]), 4),
+            "y": round(float(positions[i][1]), 4),
         })
 
     return result

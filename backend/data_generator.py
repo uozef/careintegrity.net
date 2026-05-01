@@ -309,6 +309,92 @@ def generate_data(
                     })
                     claim_idx += 1
 
+    # --- Inject explicit excessive daily hours patterns ---
+    # Some fraud workers bill 18-24h in a single day across multiple participants
+    fraud_workers = [w for w in workers if any(pid in fraud_provider_ids for pid in w["providers"])]
+    for _ in range(80):
+        worker = random.choice(fraud_workers) if fraud_workers else random.choice(workers)
+        fraud_prov_id = random.choice([pid for pid in worker["providers"] if pid in fraud_provider_ids]) if any(pid in fraud_provider_ids for pid in worker["providers"]) else worker["providers"][0]
+        day = base_date + timedelta(days=random.randint(30, 330))
+        prov = provider_lookup[fraud_prov_id]
+        # Stack 4-6 long sessions on the same day = 18-28h total
+        total_day_hours = 0
+        current_hour = random.randint(0, 4)
+        for sess in range(random.randint(4, 6)):
+            part_id = random.choice(provider_participant_map.get(fraud_prov_id, [gen_id("PRT", 0)]))
+            hours = round(random.uniform(3.5, 6.0), 1)
+            total_day_hours += hours
+            start_time = f"{current_hour:02d}:{random.choice(['00','15','30'])}"
+            end_h = min(23, current_hour + int(hours))
+            end_m = int((hours % 1) * 60)
+            end_time = f"{end_h:02d}:{end_m:02d}"
+            part = participant_lookup.get(part_id, participants[0])
+            claims.append({
+                "id": gen_id("CLM", claim_idx),
+                "provider_id": fraud_prov_id,
+                "participant_id": part_id,
+                "worker_id": worker["id"],
+                "service_type": random.choice(prov["service_types"]),
+                "date": str(day),
+                "start_time": start_time,
+                "end_time": end_time,
+                "hours": hours,
+                "rate_per_hour": round(random.uniform(70, 110), 2),
+                "total_amount": round(hours * random.uniform(70, 110), 2),
+                "location_lat": round(part["lat"] + random.uniform(-0.005, 0.005), 6),
+                "location_lng": round(part["lng"] + random.uniform(-0.005, 0.005), 6),
+                "status": "submitted",
+            })
+            claim_idx += 1
+            current_hour = min(22, current_hour + int(hours) + 1)
+
+    # --- Inject explicit travel impossibility patterns ---
+    # Workers with back-to-back sessions at locations 30-80km apart with < 15min gap
+    for _ in range(60):
+        worker = random.choice(fraud_workers) if fraud_workers else random.choice(workers)
+        fraud_prov_id = random.choice([pid for pid in worker["providers"] if pid in fraud_provider_ids]) if any(pid in fraud_provider_ids for pid in worker["providers"]) else worker["providers"][0]
+        day = base_date + timedelta(days=random.randint(30, 330))
+        prov = provider_lookup[fraud_prov_id]
+        # Pick two distant suburbs
+        suburb1 = random.choice(SUBURBS_SYDNEY[:10])
+        suburb2 = random.choice(SUBURBS_SYDNEY[10:])
+        part_ids_list = provider_participant_map.get(fraud_prov_id, [gen_id("PRT", 0)])
+
+        start_hour = random.randint(8, 14)
+        hours1 = round(random.uniform(2, 4), 1)
+        gap_mins = random.randint(5, 12)  # impossibly short gap
+        hours2 = round(random.uniform(2, 4), 1)
+
+        end1_h = min(23, start_hour + int(hours1))
+        end1_m = int((hours1 % 1) * 60)
+        start2_total_m = start_hour * 60 + int(hours1 * 60) + gap_mins
+        start2_h = start2_total_m // 60
+        start2_m = start2_total_m % 60
+        end2_h = min(23, start2_h + int(hours2))
+        end2_m = int((hours2 % 1) * 60)
+
+        for sess_idx, (suburb, start_t, end_t, hrs) in enumerate([
+            (suburb1, f"{start_hour:02d}:00", f"{end1_h:02d}:{end1_m:02d}", hours1),
+            (suburb2, f"{start2_h:02d}:{start2_m:02d}", f"{end2_h:02d}:{end2_m:02d}", hours2),
+        ]):
+            claims.append({
+                "id": gen_id("CLM", claim_idx),
+                "provider_id": fraud_prov_id,
+                "participant_id": random.choice(part_ids_list),
+                "worker_id": worker["id"],
+                "service_type": random.choice(prov["service_types"]),
+                "date": str(day),
+                "start_time": start_t,
+                "end_time": end_t,
+                "hours": hrs,
+                "rate_per_hour": round(random.uniform(70, 100), 2),
+                "total_amount": round(hrs * random.uniform(70, 100), 2),
+                "location_lat": round(suburb[1] + random.uniform(-0.01, 0.01), 6),
+                "location_lng": round(suburb[2] + random.uniform(-0.01, 0.01), 6),
+                "status": "submitted",
+            })
+            claim_idx += 1
+
     # Remove internal fraud flag from providers before output
     for p in providers:
         del p["_is_fraud"]

@@ -91,9 +91,12 @@ def detect_worker_time_impossibilities(claims):
                 "confidence": min(0.95, 0.6 + (total_hours - 16) * 0.05),
             })
 
-    # Limit to top alerts
-    alerts.sort(key=lambda x: x["confidence"], reverse=True)
-    return alerts[:100]
+    # Ensure both types are represented — take top 50 of each type
+    time_imp = sorted([a for a in alerts if a["type"] == "worker_time_impossibility"], key=lambda x: x["confidence"], reverse=True)[:50]
+    excess_hrs = sorted([a for a in alerts if a["type"] == "excessive_daily_hours"], key=lambda x: x["confidence"], reverse=True)[:50]
+    combined = time_imp + excess_hrs
+    combined.sort(key=lambda x: x["confidence"], reverse=True)
+    return combined
 
 
 def detect_participant_overservicing(claims, participants):

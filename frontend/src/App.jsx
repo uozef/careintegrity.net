@@ -16,6 +16,18 @@ import Engines from './pages/Engines'
 import FineCodes from './pages/FineCodes'
 import Penalties from './pages/Penalties'
 import FinancialTracker from './pages/FinancialTracker'
+import RuleEngine from './pages/RuleEngine'
+import Investigation from './pages/Investigation'
+import SearchPortal from './pages/SearchPortal'
+import ServiceCodes from './pages/ServiceCodes'
+import FraudCases from './pages/FraudCases'
+import UserManagement from './pages/UserManagement'
+import ExecutiveReport from './pages/ExecutiveReport'
+import Watchlist from './pages/Watchlist'
+import Compliance from './pages/Compliance'
+import Tipoffs from './pages/Tipoffs'
+import SystemHealth from './pages/SystemHealth'
+import RiskHeatmap from './pages/RiskHeatmap'
 
 export const ThemeContext = createContext()
 
@@ -65,6 +77,18 @@ export default function App() {
       case 'fine-codes': return <FineCodes />
       case 'penalties': return <Penalties />
       case 'financial': return <FinancialTracker />
+      case 'rules': return <RuleEngine />
+      case 'investigation': return <Investigation />
+      case 'search': return <SearchPortal />
+      case 'service-codes': return <ServiceCodes />
+      case 'fraud-cases': return <FraudCases />
+      case 'users': return <UserManagement />
+      case 'executive-report': return <ExecutiveReport />
+      case 'watchlist': return <Watchlist />
+      case 'compliance': return <Compliance />
+      case 'tipoffs': return <Tipoffs />
+      case 'system-health': return <SystemHealth />
+      case 'risk-heatmap': return <RiskHeatmap />
       default: return <Dashboard onNavigate={navigate} />
     }
   }

@@ -173,33 +173,81 @@ def get_graph_stats(G):
     }
 
 
-def get_graph_data_for_viz(G, max_nodes=200):
-    """Return graph data formatted for frontend visualization."""
-    # Get top nodes by degree
+def get_graph_data_for_viz(G, max_nodes=300):
+    """Return graph data formatted for frontend visualization.
+    Ensures balanced representation of all node types.
+    """
     degrees = dict(G.degree())
-    top_nodes = sorted(degrees, key=degrees.get, reverse=True)[:max_nodes]
-    top_set = set(top_nodes)
+
+    # Ensure all node types are represented
+    by_type = defaultdict(list)
+    for n, data in G.nodes(data=True):
+        by_type[data.get("type", "unknown")].append((n, degrees.get(n, 0)))
+
+    # Allocate proportionally but ensure minimums
+    selected = set()
+    type_limits = {
+        "provider": min(60, len(by_type["provider"])),
+        "worker": min(80, len(by_type["worker"])),
+        "participant": min(120, len(by_type["participant"])),
+        "location": min(40, len(by_type["location"])),
+    }
+    for ntype, limit in type_limits.items():
+        sorted_nodes = sorted(by_type.get(ntype, []), key=lambda x: x[1], reverse=True)
+        for n, _ in sorted_nodes[:limit]:
+            selected.add(n)
+
+    # Fill remaining slots with highest-degree nodes
+    remaining = max_nodes - len(selected)
+    if remaining > 0:
+        rest = sorted(
+            [(n, d) for n, d in degrees.items() if n not in selected],
+            key=lambda x: x[1], reverse=True
+        )
+        for n, _ in rest[:remaining]:
+            selected.add(n)
+
+    # Compute per-node edge summaries
+    node_edge_summary = defaultdict(lambda: {"bills_total": 0, "serves_count": 0, "employs_count": 0})
+    for u, v, data in G.edges(data=True):
+        rel = data.get("relationship", "")
+        w = data.get("weight", 0)
+        if rel == "bills":
+            node_edge_summary[u]["bills_total"] += w
+            node_edge_summary[v]["bills_total"] += w
+        elif rel == "serves":
+            node_edge_summary[u]["serves_count"] += 1
+            node_edge_summary[v]["serves_count"] += 1
+        elif rel == "employs":
+            node_edge_summary[u]["employs_count"] += 1
+            node_edge_summary[v]["employs_count"] += 1
 
     nodes = []
-    for n in top_nodes:
+    for n in selected:
         data = G.nodes[n]
+        summary = node_edge_summary[n]
         nodes.append({
             "id": n,
             "type": data.get("type", "unknown"),
             "name": data.get("name", n),
-            "degree": degrees[n],
+            "degree": degrees.get(n, 0),
             "lat": data.get("lat"),
             "lng": data.get("lng"),
+            "role": data.get("role"),
+            "address": data.get("address"),
+            "bills_total": round(summary["bills_total"], 2),
+            "serves_count": summary["serves_count"],
+            "employs_count": summary["employs_count"],
         })
 
     edges = []
     for u, v, data in G.edges(data=True):
-        if u in top_set and v in top_set:
+        if u in selected and v in selected:
             edges.append({
                 "source": u,
                 "target": v,
                 "relationship": data.get("relationship", ""),
-                "weight": data.get("weight", 1),
+                "weight": round(data.get("weight", 1), 2),
             })
 
     return {"nodes": nodes, "edges": edges}
