@@ -3,263 +3,367 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CareIntegrity.AI — NDIS Fraud Intelligence Platform</title>
-<meta name="description" content="Australia's most advanced NDIS fraud detection system. 8 AI engines, real-time monitoring, $47M+ fraud detected. Protecting participants, safeguarding taxpayer funds.">
+<title>CareIntegrity.AI — Strengthening Trust, Sustainability & Integrity in the NDIS</title>
+<meta name="description" content="A real-time intelligence layer for Australia's $50B NDIS. 8 AI engines detecting systemic fraud across 270K providers and 750K participants. From reactive audits to proactive oversight.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#06080f;--bg2:#0c1020;--card:#111830;--border:#1a2245;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--orange:#f97316;--text:#e8ecf4;--muted:#6b7394}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
-a{color:var(--blue);text-decoration:none}
+:root{--bg:#060a14;--bg2:#0a0f1e;--bg3:#0e1428;--card:#111a30;--border:#1a2548;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06d6a0;--green:#10b981;--red:#ef4444;--orange:#f97316;--pink:#ec4899;--text:#e8ecf4;--muted:#7b83a6;--accent:#06d6a0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan);text-decoration:none;transition:opacity 0.2s}a:hover{opacity:0.85}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(24px);background:rgba(6,10,20,0.85);border-bottom:1px solid rgba(26,37,72,0.4)}
+nav .logo{font-size:19px;font-weight:900;color:var(--cyan);letter-spacing:-0.5px}
+nav .logo span{color:var(--text)}
+nav .nav-links{display:flex;gap:28px;align-items:center}
+nav .nav-links a{font-size:14px;color:var(--muted);font-weight:500}nav .nav-links a:hover{color:var(--text)}
+.nav-btn{padding:9px 22px;background:var(--cyan);border:none;border-radius:8px;color:#06080f;font-size:13px;font-weight:800;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+.nav-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(6,214,160,0.25)}
 
 /* HERO */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:40px 20px}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(59,130,246,0.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(139,92,246,0.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(6,182,212,0.04) 0%,transparent 60%)}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:60px 60px}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:120px 24px 80px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(6,214,160,0.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(59,130,246,0.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(139,92,246,0.04) 0%,transparent 60%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(6,214,160,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(6,214,160,0.02) 1px,transparent 1px);background-size:50px 50px}
 .hero-content{position:relative;z-index:1;max-width:1100px;text-align:center}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:40px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);font-size:13px;color:var(--blue);font-weight:600;margin-bottom:32px;letter-spacing:0.5px}
-.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
-.hero h1{font-size:clamp(42px,6vw,76px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
-.hero h1 span{background:linear-gradient(135deg,var(--blue),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p.sub{font-size:clamp(18px,2.5vw,24px);color:var(--muted);max-width:700px;margin:0 auto 40px;line-height:1.6;font-weight:400}
-.hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
-.btn-primary{padding:16px 36px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;letter-spacing:0.3px}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(59,130,246,0.3)}
-.btn-secondary{padding:16px 36px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s}
-.btn-secondary:hover{border-color:var(--blue);background:rgba(59,130,246,0.05)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 20px;border-radius:40px;background:rgba(6,214,160,0.08);border:1px solid rgba(6,214,160,0.2);font-size:13px;color:var(--cyan);font-weight:700;margin-bottom:36px;letter-spacing:0.5px}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,214,160,0.4)}50%{box-shadow:0 0 0 10px rgba(6,214,160,0)}}
+.hero h1{font-size:clamp(38px,5.5vw,68px);font-weight:900;line-height:1.08;letter-spacing:-2.5px;margin-bottom:24px}
+.hero h1 .grad{background:linear-gradient(135deg,var(--cyan),#3b82f6,var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .tagline{font-size:clamp(16px,2vw,22px);color:var(--muted);max-width:680px;margin:0 auto 44px;line-height:1.65;font-weight:400}
+.hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.btn-lg{padding:16px 40px;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;transition:all 0.3s;letter-spacing:0.3px;border:none}
+.btn-cyan{background:var(--cyan);color:#06080f}.btn-cyan:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(6,214,160,0.25)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--cyan);background:rgba(6,214,160,0.04)}
 
-/* STATS BAR */
-.stats-bar{display:flex;justify-content:center;gap:clamp(20px,5vw,60px);flex-wrap:wrap;padding:20px 0}
+/* STATS */
+.stats-bar{display:flex;justify-content:center;gap:clamp(24px,5vw,64px);flex-wrap:wrap}
 .stat-item{text-align:center}
-.stat-item .num{font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1px}
-.stat-item .num.blue{color:var(--blue)}.stat-item .num.green{color:var(--green)}.stat-item .num.red{color:var(--red)}.stat-item .num.purple{color:var(--purple)}.stat-item .num.orange{color:var(--orange)}.stat-item .num.cyan{color:var(--cyan)}
-.stat-item .label{font-size:13px;color:var(--muted);font-weight:500;margin-top:4px;letter-spacing:0.5px;text-transform:uppercase}
+.stat-item .num{font-size:clamp(32px,4.5vw,52px);font-weight:900;letter-spacing:-1.5px;line-height:1.1}
+.stat-item .label{font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;letter-spacing:1px;text-transform:uppercase}
+.c1{color:var(--cyan)}.c2{color:#3b82f6}.c3{color:var(--purple)}.c4{color:var(--orange)}.c5{color:var(--green)}.c6{color:var(--pink)}
 
 /* SECTIONS */
-section{padding:100px 20px}
+section{padding:100px 24px}
 .container{max-width:1200px;margin:0 auto}
-.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--blue);margin-bottom:12px}
-.section-title{font-size:clamp(32px,4vw,48px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px;line-height:1.1}
-.section-desc{font-size:18px;color:var(--muted);max-width:600px;line-height:1.6;margin-bottom:48px}
-
-/* ENGINES */
-.engines-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
-.engine-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all 0.3s;position:relative;overflow:hidden}
-.engine-card:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 20px 60px rgba(59,130,246,0.1)}
-.engine-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));opacity:0;transition:opacity 0.3s}
-.engine-card:hover::before{opacity:1}
-.engine-num{font-size:40px;font-weight:900;color:rgba(59,130,246,0.15);position:absolute;top:16px;right:20px;line-height:1}
-.engine-name{font-size:18px;font-weight:800;margin-bottom:8px}
-.engine-desc{font-size:14px;color:var(--muted);line-height:1.6}
-.engine-tag{display:inline-block;margin-top:12px;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(59,130,246,0.1);color:var(--blue)}
-
-/* FEATURES */
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-.feature{padding:32px;border-radius:16px;background:var(--card);border:1px solid var(--border);transition:all 0.3s}
-.feature:hover{border-color:var(--purple);transform:translateY(-3px)}
-.feature-icon{font-size:32px;margin-bottom:16px}
-.feature h3{font-size:18px;font-weight:800;margin-bottom:8px}
-.feature p{font-size:14px;color:var(--muted);line-height:1.6}
+.sec-label{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;padding:5px 14px;border-radius:6px;margin-bottom:16px}
+.sec-label.cyan{background:rgba(6,214,160,0.1);color:var(--cyan);border:1px solid rgba(6,214,160,0.2)}
+.sec-label.blue{background:rgba(59,130,246,0.1);color:var(--blue);border:1px solid rgba(59,130,246,0.2)}
+.sec-label.purple{background:rgba(139,92,246,0.1);color:var(--purple);border:1px solid rgba(139,92,246,0.2)}
+.sec-label.orange{background:rgba(249,115,22,0.1);color:var(--orange);border:1px solid rgba(249,115,22,0.2)}
+.sec-label.red{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.sec-label.green{background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
+.sec-title{font-size:clamp(30px,4vw,48px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px;line-height:1.1}
+.sec-desc{font-size:17px;color:var(--muted);max-width:620px;line-height:1.65;margin-bottom:48px}
 
 /* PROBLEM */
 .problem-section{background:var(--bg2)}
-.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.problem-stat{display:flex;gap:16px;align-items:flex-start;margin-bottom:24px}
-.problem-stat .icon{font-size:28px;flex-shrink:0}
-.problem-stat h4{font-size:16px;font-weight:700;margin-bottom:4px}
-.problem-stat p{font-size:14px;color:var(--muted);line-height:1.5}
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.problem-cards{display:flex;flex-direction:column;gap:16px}
+.pcard{padding:20px 24px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all 0.3s}
+.pcard:hover{border-color:var(--red);transform:translateX(4px)}
+.pcard h4{font-size:16px;font-weight:800;margin-bottom:4px}
+.pcard p{font-size:13px;color:var(--muted);line-height:1.5}
+.gap-callout{padding:20px;border-radius:12px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);margin-top:24px}
+.gap-callout strong{color:var(--red)}
+.gap-callout p{font-size:14px;color:var(--muted);line-height:1.6}
 
-/* QUOTE */
-.quote-section{text-align:center;background:linear-gradient(135deg,rgba(59,130,246,0.05),rgba(139,92,246,0.05))}
-.quote{font-size:clamp(24px,3vw,36px);font-weight:700;font-style:italic;max-width:800px;margin:0 auto 20px;line-height:1.4;letter-spacing:-0.5px}
-.quote-author{font-size:14px;color:var(--muted)}
+/* INSIGHT */
+.insight-section{background:var(--bg3)}
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.insight-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.icard{padding:24px;border-radius:14px;border:1px solid var(--border);background:var(--card);transition:all 0.3s}
+.icard:hover{border-color:var(--cyan)}
+.icard h4{font-size:15px;font-weight:800;margin-bottom:6px;color:var(--cyan)}
+.icard p{font-size:13px;color:var(--muted);line-height:1.5}
+.icard.wide{grid-column:1/-1}
+
+/* 4 LAYERS */
+.layers-section{background:var(--bg2)}
+.layers{display:flex;flex-direction:column;gap:20px;max-width:800px;margin:0 auto}
+.layer{display:flex;gap:24px;align-items:flex-start;padding:28px;border-radius:16px;background:var(--card);border:1px solid var(--border);transition:all 0.3s}
+.layer:hover{border-color:var(--cyan);transform:translateX(4px)}
+.layer-num{width:48px;height:48px;border-radius:12px;background:rgba(6,214,160,0.1);border:1px solid rgba(6,214,160,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--cyan);flex-shrink:0}
+.layer h4{font-size:18px;font-weight:800;margin-bottom:4px}
+.layer p{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* ENGINES */
+.engines-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.ecard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 24px 20px;transition:all 0.3s;position:relative;overflow:hidden}
+.ecard:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 16px 48px rgba(59,130,246,0.08)}
+.ecard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple));opacity:0;transition:opacity 0.3s}
+.ecard:hover::before{opacity:1}
+.ecard-num{position:absolute;top:14px;right:18px;font-size:36px;font-weight:900;color:rgba(59,130,246,0.08);line-height:1}
+.ecard h3{font-size:16px;font-weight:800;margin-bottom:6px}
+.ecard p{font-size:13px;color:var(--muted);line-height:1.55}
+.ecard-tag{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;background:rgba(6,214,160,0.08);color:var(--cyan);border:1px solid rgba(6,214,160,0.15)}
+
+/* OUTCOMES */
+.outcomes-section{background:var(--bg3)}
+.outcomes-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.ocard{padding:32px;border-radius:16px;border:1px solid var(--border);background:var(--card);transition:all 0.3s}
+.ocard:hover{border-color:var(--green)}
+.ocard h4{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--cyan)}
+.ocard p{font-size:14px;color:var(--muted);line-height:1.6}
+.ocard.highlight{background:linear-gradient(135deg,rgba(6,214,160,0.08),rgba(59,130,246,0.06));border-color:rgba(6,214,160,0.2)}
+.ocard .big-num{font-size:42px;font-weight:900;color:var(--cyan);letter-spacing:-2px;margin-bottom:8px}
+
+/* VISION */
+.vision-section{background:var(--bg2)}
+.vision-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.vstep{padding:24px;border-radius:14px;background:var(--card);border:1px solid var(--border);text-align:center;transition:all 0.3s}
+.vstep:hover{border-color:var(--cyan);transform:translateY(-3px)}
+.vstep-num{width:40px;height:40px;border-radius:10px;background:rgba(6,214,160,0.1);border:1px solid rgba(6,214,160,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:var(--cyan);margin:0 auto 12px}
+.vstep h4{font-size:16px;font-weight:800;margin-bottom:4px}
+.vstep p{font-size:12px;color:var(--muted);line-height:1.5}
+.vision-callout{max-width:700px;margin:40px auto 0;padding:20px 28px;border-radius:12px;background:rgba(6,214,160,0.06);border:1px solid rgba(6,214,160,0.15);text-align:center;font-size:15px;color:var(--muted);line-height:1.6}
+.vision-callout strong{color:var(--cyan)}
+
+/* COMPARE */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;margin:0 auto}
+.compare-card{padding:32px;border-radius:16px;border:1px solid var(--border);background:var(--card)}
+.compare-card h3{font-size:18px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.compare-card ul{list-style:none;padding:0}
+.compare-card li{padding:8px 0;border-bottom:1px solid rgba(26,37,72,0.5);font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.compare-card.old li::before{content:'✕';color:var(--red);font-weight:700;font-size:12px}
+.compare-card.new{border-color:rgba(6,214,160,0.2);background:linear-gradient(135deg,rgba(6,214,160,0.04),rgba(59,130,246,0.03))}
+.compare-card.new li::before{content:'✓';color:var(--cyan);font-weight:700;font-size:14px}
 
 /* CTA */
-.cta-section{text-align:center;padding:120px 20px}
-.cta-section h2{font-size:clamp(36px,5vw,56px);font-weight:900;letter-spacing:-2px;margin-bottom:20px}
-.cta-section h2 span{background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cta-section p{font-size:18px;color:var(--muted);max-width:500px;margin:0 auto 36px;line-height:1.6}
-
-/* FOOTER */
-footer{padding:40px 20px;border-top:1px solid var(--border);text-align:center}
-footer .logo{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
-footer p{font-size:13px;color:var(--muted)}
-footer .links{display:flex;gap:24px;justify-content:center;margin-top:16px}
-footer .links a{font-size:13px;color:var(--muted);transition:color 0.2s}
-footer .links a:hover{color:var(--blue)}
+.cta-section{text-align:center;padding:120px 24px;background:radial-gradient(ellipse at 50% 50%,rgba(6,214,160,0.06),transparent 60%)}
+.cta-section h2{font-size:clamp(36px,5vw,56px);font-weight:900;letter-spacing:-2px;margin-bottom:18px}
+.cta-section h2 .grad{background:linear-gradient(135deg,var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
 /* TRUST */
-.trust-bar{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;padding:60px 20px;opacity:0.6}
-.trust-item{font-size:14px;color:var(--muted);font-weight:600;letter-spacing:0.5px}
+.trust-bar{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;padding:48px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.trust-item{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:0.3px;display:flex;align-items:center;gap:6px}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);background:rgba(6,8,15,0.8);border-bottom:1px solid rgba(26,34,69,0.5)}
-nav .logo{font-size:18px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-nav .nav-links{display:flex;gap:28px;align-items:center}
-nav .nav-links a{font-size:14px;color:var(--muted);font-weight:500;transition:color 0.2s}
-nav .nav-links a:hover{color:var(--text)}
-nav .nav-btn{padding:8px 20px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
-nav .nav-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,0.3)}
+/* FOOTER */
+footer{padding:48px 24px;text-align:center}
+footer .logo{font-size:20px;font-weight:900;color:var(--cyan);margin-bottom:8px}
+footer p{font-size:13px;color:var(--muted)}
+footer .links{display:flex;gap:24px;justify-content:center;margin:16px 0}
+footer .links a{font-size:13px;color:var(--muted)}footer .links a:hover{color:var(--cyan)}
 
-/* RESPONSIVE */
 @media(max-width:768px){
-  .problem-grid{grid-template-columns:1fr}
-  nav .nav-links a:not(.nav-btn){display:none}
-  .stats-bar{gap:24px}
+.problem-grid,.insight-grid,.outcomes-grid,.compare-grid{grid-template-columns:1fr}
+.vision-steps{grid-template-columns:1fr 1fr}
+nav .nav-links a:not(.nav-btn){display:none}
+.layers{gap:12px}.layer{padding:20px}
 }
-
-/* ANIMATIONS */
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.float{animation:float 6s ease-in-out infinite}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">CareIntegrity.AI</div>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
   <div class="nav-links">
+    <a href="#problem">The Problem</a>
+    <a href="#solution">Solution</a>
     <a href="#engines">Engines</a>
-    <a href="#features">Features</a>
-    <a href="#problem">Why Us</a>
+    <a href="#outcomes">Outcomes</a>
     <a href="https://demo.careintegrity.ai" class="nav-btn">Access Demo</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="hero-badge"><span class="dot"></span> Now Detecting Fraud in Real-Time</div>
-    <h1>Stop NDIS Fraud<br>Before It <span>Costs Billions</span></h1>
-    <p class="sub">Australia's most advanced AI-powered fraud intelligence platform. 8 detection engines working together to protect participants and safeguard $35B+ in NDIS funding.</p>
+    <div class="hero-badge"><span class="dot"></span> Real-Time Intelligence for the NDIS</div>
+    <h1>Strengthening Trust,<br>Sustainability &amp;<br><span class="grad">Integrity in the NDIS</span></h1>
+    <p class="tagline">Real-time visibility across the care ecosystem. Early detection of anomalies and systemic risk. Designed for government-scale welfare systems.</p>
     <div class="hero-cta">
-      <a href="https://demo.careintegrity.ai" class="btn-primary">Try Live Demo</a>
-      <a href="#engines" class="btn-secondary">See How It Works</a>
+      <a href="https://demo.careintegrity.ai" class="btn-lg btn-cyan">Try Live Demo</a>
+      <a href="#solution" class="btn-lg btn-outline">How It Works</a>
     </div>
     <div class="stats-bar">
-      <div class="stat-item"><div class="num red">$47M</div><div class="label">Fraud Detected</div></div>
-      <div class="stat-item"><div class="num blue">98,966</div><div class="label">Claims Analysed</div></div>
-      <div class="stat-item"><div class="num green">8</div><div class="label">AI Engines</div></div>
-      <div class="stat-item"><div class="num orange">932</div><div class="label">Alerts Generated</div></div>
-      <div class="stat-item"><div class="num purple">$24M</div><div class="label">Penalties Issued</div></div>
-      <div class="stat-item"><div class="num cyan">60</div><div class="label">Providers Monitored</div></div>
+      <div class="stat-item"><div class="num c1">$50B</div><div class="label">Annual Program</div></div>
+      <div class="stat-item"><div class="num c2">750K</div><div class="label">Participants</div></div>
+      <div class="stat-item"><div class="num c3">270K</div><div class="label">Providers</div></div>
+      <div class="stat-item"><div class="num c4">8</div><div class="label">AI Engines</div></div>
+      <div class="stat-item"><div class="num c5">$1-3B</div><div class="label">Savings Potential</div></div>
     </div>
   </div>
 </section>
 
-<!-- PROBLEM SECTION -->
 <section class="problem-section" id="problem">
   <div class="container">
     <div class="problem-grid">
       <div>
-        <div class="section-label">The Problem</div>
-        <div class="section-title">NDIS Fraud is a<br>National Crisis</div>
-        <div class="section-desc">Traditional systems ask "Is this invoice valid?" — CareIntegrity.AI asks "Does this provider behave like a legitimate economic organism inside the NDIS network?"</div>
+        <div class="sec-label red">Executive Context</div>
+        <div class="sec-title">The NDIS: A National Success — and a Growing Complexity Challenge</div>
+        <div class="sec-desc">Rapid growth has outpaced real-time oversight capability, creating a widening gap between program scale and integrity infrastructure.</div>
       </div>
-      <div>
-        <div class="problem-stat">
-          <div class="icon">💸</div>
-          <div><h4>$7.6 Billion Lost Annually</h4><p>NDIS fraud, waste, and abuse costs Australian taxpayers billions every year with current detection methods catching only a fraction.</p></div>
-        </div>
-        <div class="problem-stat">
-          <div class="icon">🕳️</div>
-          <div><h4>Invoice-Level Checks Miss 80%</h4><p>Checking individual invoices misses systematic fraud — collusion networks, impossible service patterns, and behavioural drift.</p></div>
-        </div>
-        <div class="problem-stat">
-          <div class="icon">⏱️</div>
-          <div><h4>Detection Takes Months</h4><p>By the time fraud is detected through traditional audits, providers have already billed millions and moved on.</p></div>
-        </div>
-        <div class="problem-stat">
-          <div class="icon">🛡️</div>
-          <div><h4>Participants Left Unprotected</h4><p>Fraudulent providers compromise care quality, leaving vulnerable Australians without the support they need.</p></div>
+      <div class="problem-cards">
+        <div class="pcard"><h4>Rising Plan Complexity</h4><p>Participant plans are increasingly complex with multiple providers, service types, and funding categories.</p></div>
+        <div class="pcard"><h4>Fragmented Provider Ecosystem</h4><p>270,000 providers create inconsistent billing behaviours that are impossible to monitor manually.</p></div>
+        <div class="pcard"><h4>Variable Billing Behaviours</h4><p>Without standardised oversight, billing anomalies go undetected until significant financial leakage occurs.</p></div>
+        <div class="pcard"><h4>Reactive Auditing</h4><p>Current tools identify problems months after claims are processed — by then, the damage is done.</p></div>
+        <div class="gap-callout">
+          <p><strong>The critical gap:</strong> No real-time understanding of system-wide behaviour. The NDIS operates without continuous visibility into provider networks, billing trends, or emerging systemic risk.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 8 ENGINES -->
+<section class="insight-section" id="insight">
+  <div class="container">
+    <div class="insight-grid">
+      <div>
+        <div class="sec-label purple">Core Insight</div>
+        <div class="sec-title">Integrity Risk Is Systemic, Not Transactional</div>
+        <p class="sec-desc">Most integrity issues don't emerge from single suspicious claims — they emerge from patterns that only become visible when you view the system as a connected network.</p>
+      </div>
+      <div class="insight-cards">
+        <div class="icard"><h4>Provider Behaviour Over Time</h4><p>Gradual drift in billing patterns signals emerging risk long before individual invoices look wrong.</p></div>
+        <div class="icard"><h4>Network Relationships</h4><p>Clusters of connected providers sharing staff, locations, and participants reveal coordinated abuse.</p></div>
+        <div class="icard wide"><h4>Care Feasibility</h4><p>Claimed services that are physically impossible given time, staffing, and geography — workers billing at two locations simultaneously, 24-hour days, impossible travel.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="container">
+    <div class="sec-label cyan">The Solution</div>
+    <div class="sec-title">A Real-Time Intelligence Layer<br>for the NDIS</div>
+    <p class="sec-desc">CareIntegrity.ai is not another compliance tool. It is a foundational intelligence layer — purpose-built to provide continuous, system-wide visibility across the entire NDIS care ecosystem.</p>
+    <div style="display:flex;gap:40px;flex-wrap:wrap;margin-bottom:48px">
+      <div style="flex:1;min-width:250px"><h3 style="font-size:20px;font-weight:800;margin-bottom:6px;color:var(--cyan)">Full Ecosystem Visibility</h3><p style="font-size:14px;color:var(--muted);line-height:1.6">See providers, participants, workers, and services as one connected system.</p></div>
+      <div style="flex:1;min-width:250px"><h3 style="font-size:20px;font-weight:800;margin-bottom:6px;color:var(--blue)">Early Anomaly Detection</h3><p style="font-size:14px;color:var(--muted);line-height:1.6">Identify risk signals before they become financial losses.</p></div>
+      <div style="flex:1;min-width:250px"><h3 style="font-size:20px;font-weight:800;margin-bottom:6px;color:var(--purple)">Continuous Monitoring</h3><p style="font-size:14px;color:var(--muted);line-height:1.6">Always-on oversight, not periodic audits.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="layers-section" id="layers">
+  <div class="container">
+    <div class="sec-label green">How It Works</div>
+    <div class="sec-title" style="text-align:center">A 4-Layer Integrity<br>Intelligence System</div>
+    <p class="sec-desc" style="text-align:center;margin:0 auto 48px">Each layer builds on the one before it — transforming raw claims data into actionable system-level risk intelligence.</p>
+    <div class="layers">
+      <div class="layer"><div class="layer-num">1</div><div><h4>Care Network Graph</h4><p>Maps providers, participants, workers, and services as a connected network. Detects closed-loop money flows and controlled clusters.</p></div></div>
+      <div class="layer"><div class="layer-num">2</div><div><h4>Behaviour Monitoring</h4><p>Tracks provider behaviour changes over time. Catches impossible acceleration, billing spikes, and semantic role shifts.</p></div></div>
+      <div class="layer"><div class="layer-num">3</div><div><h4>Care Feasibility</h4><p>Validates claimed care against time, staffing, and geography. Detects physical impossibilities that no invoice-level check can find.</p></div></div>
+      <div class="layer"><div class="layer-num">4</div><div><h4>Risk Intelligence</h4><p>Combines all signals into a unified risk score. Automated alerts, penalty issuance, and enforcement workflows.</p></div></div>
+    </div>
+  </div>
+</section>
+
 <section id="engines">
   <div class="container">
-    <div class="section-label">Detection Technology</div>
-    <div class="section-title">8 AI Engines Working<br>in Concert</div>
-    <div class="section-desc">Unlike single-dimension fraud checks, CareIntegrity.AI analyses the entire ecosystem — relationships, behaviour, time, geography, and finances — simultaneously.</div>
+    <div class="sec-label blue">Detection Technology</div>
+    <div class="sec-title">8 AI Engines Working in Concert</div>
+    <p class="sec-desc">Unlike single-dimension fraud checks, CareIntegrity.AI analyses the entire ecosystem simultaneously.</p>
     <div class="engines-grid">
-      <div class="engine-card"><div class="engine-num">01</div><div class="engine-name">Network Graph Analysis</div><div class="engine-desc">Maps every provider-participant-worker relationship. Detects closed-loop money flows, invoice cycling, and controlled provider clusters in real-time.</div><div class="engine-tag">Closed-loop detection</div></div>
-      <div class="engine-card"><div class="engine-num">02</div><div class="engine-name">Behavioural Drift Engine</div><div class="engine-desc">Tracks provider "fingerprints" over time. Catches impossible acceleration — growing from 5 to 80 participants in 6 weeks with no new staff.</div><div class="engine-tag">Structural impossibility</div></div>
-      <div class="engine-card"><div class="engine-num">03</div><div class="engine-name">Time Budget Constraints</div><div class="engine-desc">Models human physical limits. Detects workers billed at two locations simultaneously, 24-hour days, and impossible travel between sessions.</div><div class="engine-tag">Physical impossibility</div></div>
-      <div class="engine-card"><div class="engine-num">04</div><div class="engine-name">Provider DNA Embeddings</div><div class="engine-desc">Converts each provider into an AI behaviour vector. Detects when a therapy provider suddenly becomes SIL-heavy — a semantic role shift anomaly.</div><div class="engine-tag">AI representation learning</div></div>
-      <div class="engine-card"><div class="engine-num">05</div><div class="engine-name">Synthetic Simulation</div><div class="engine-desc">Generates what "normal care" looks like for each participant profile, then compares real billing to detect over-servicing and service stacking.</div><div class="engine-tag">Baseline comparison</div></div>
-      <div class="engine-card"><div class="engine-num">06</div><div class="engine-name">Collusion Detection</div><div class="engine-desc">Uses graph community detection to find provider cartels — shared staff networks, common addresses, and coordinated referral loops.</div><div class="engine-tag">Organised fraud detection</div></div>
-      <div class="engine-card"><div class="engine-num">07</div><div class="engine-name">Invoice Pressure Testing</div><div class="engine-desc">Every invoice scored against historical baselines, peer averages, workforce constraints, and geographic feasibility with forensic z-score analysis.</div><div class="engine-tag">Multi-dimensional scoring</div></div>
-      <div class="engine-card"><div class="engine-num">08</div><div class="engine-name">Custom Rule Engine</div><div class="engine-desc">Officers define custom detection rules with conditions, operators, and AND/OR logic. 16,000+ matches found automatically on first scan.</div><div class="engine-tag">Configurable rules</div></div>
+      <div class="ecard"><div class="ecard-num">01</div><h3>Network Graph Analysis</h3><p>Maps every relationship in the ecosystem. Detects closed-loop money flows, invoice cycling, and controlled provider clusters.</p><div class="ecard-tag">Closed-loop detection</div></div>
+      <div class="ecard"><div class="ecard-num">02</div><h3>Behavioural Drift Engine</h3><p>Tracks provider "fingerprints" over time. Catches impossible acceleration — 5 to 80 participants in 6 weeks with no new staff.</p><div class="ecard-tag">Structural impossibility</div></div>
+      <div class="ecard"><div class="ecard-num">03</div><h3>Time Budget Constraints</h3><p>Models human physical limits. Workers billed at two locations simultaneously. 24-hour billing days. Impossible travel.</p><div class="ecard-tag">Physical impossibility</div></div>
+      <div class="ecard"><div class="ecard-num">04</div><h3>Provider DNA Embeddings</h3><p>AI converts each provider into a behaviour vector. Detects when a therapy provider suddenly becomes SIL-heavy.</p><div class="ecard-tag">AI representation learning</div></div>
+      <div class="ecard"><div class="ecard-num">05</div><h3>Synthetic Simulation</h3><p>Generates "normal care" baselines per participant. Compares real billing to detect over-servicing and stacking.</p><div class="ecard-tag">Baseline comparison</div></div>
+      <div class="ecard"><div class="ecard-num">06</div><h3>Collusion Detection</h3><p>Graph community detection finds provider cartels — shared staff networks, common addresses, referral loops.</p><div class="ecard-tag">Organised fraud</div></div>
+      <div class="ecard"><div class="ecard-num">07</div><h3>Invoice Pressure Testing</h3><p>Every invoice scored against historical baselines, peer averages, workforce constraints, and geographic feasibility.</p><div class="ecard-tag">Forensic z-score analysis</div></div>
+      <div class="ecard"><div class="ecard-num">08</div><h3>Custom Rule Engine</h3><p>Officers define custom detection rules with conditions, operators, and AND/OR logic. 16,000+ matches on first scan.</p><div class="ecard-tag">Configurable rules</div></div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section id="features" style="background:var(--bg2)">
+<section style="background:var(--bg2)">
   <div class="container">
-    <div class="section-label">Platform Capabilities</div>
-    <div class="section-title">Enterprise-Grade<br>Fraud Intelligence</div>
-    <div class="section-desc">Everything a government fraud team needs — from detection to enforcement, investigation to compliance.</div>
-    <div class="features-grid">
-      <div class="feature"><div class="feature-icon">🔍</div><h3>Fraud Case Manager</h3><p>Review evidence, see proposed penalties, approve enforcement with one click. Full forensic drill-down to individual claims.</p></div>
-      <div class="feature"><div class="feature-icon">📊</div><h3>Executive Reports</h3><p>Printable compliance reports with recommendations, risk distribution, and financial summaries for leadership and boards.</p></div>
-      <div class="feature"><div class="feature-icon">🗺️</div><h3>Geographic Risk Heatmap</h3><p>Visualise fraud hotspots across regions. Click any location to see provider details and risk assessment.</p></div>
-      <div class="feature"><div class="feature-icon">💰</div><h3>Financial Tracker</h3><p>Track $47M+ detected fraud, $24M penalties issued, collection rates, and recovery by provider and category.</p></div>
-      <div class="feature"><div class="feature-icon">⚖️</div><h3>Automated Penalties</h3><p>10 fine codes with configurable amounts and severity multipliers. Auto-issue penalties with email notifications to providers.</p></div>
-      <div class="feature"><div class="feature-icon">🔐</div><h3>Role-Based Access</h3><p>6 roles (Admin, Fraud Officer, Investigator, Inspector, Analyst, Viewer) with 35+ granular permissions and full audit trail.</p></div>
-      <div class="feature"><div class="feature-icon">📋</div><h3>NDIS Compliance</h3><p>12 compliance standards across 6 categories with automated and manual checks. Overall compliance score tracking.</p></div>
-      <div class="feature"><div class="feature-icon">🔔</div><h3>Whistleblower Portal</h3><p>Anonymous tip-off submission with investigation workflow, case notes, and escalation management.</p></div>
-      <div class="feature"><div class="feature-icon">👁️</div><h3>Watchlist Management</h3><p>Track entities under active surveillance with notes, priority levels, review dates, and resolution workflows.</p></div>
-      <div class="feature"><div class="feature-icon">🌐</div><h3>3D Collusion Map</h3><p>Real-time rotating 3D graph showing provider-to-provider collusion links — shared staff, locations, and participants.</p></div>
-      <div class="feature"><div class="feature-icon">🧬</div><h3>Provider DNA Analysis</h3><p>PCA embedding space with navigator. Click any provider to see full behavioural DNA profile and mutation history.</p></div>
-      <div class="feature"><div class="feature-icon">🌙</div><h3>Dark & Light Themes</h3><p>Professional interface with both dark and light modes. Designed for extended analyst use in operations centres.</p></div>
+    <div class="sec-label orange">What It Enables</div>
+    <div class="sec-title" style="text-align:center">From Reactive Audits to<br>Proactive Oversight</div>
+    <div class="compare-grid" style="margin-top:48px">
+      <div class="compare-card old">
+        <h3><span style="color:var(--red)">&#9679;</span> Today's Approach</h3>
+        <ul>
+          <li>Post-payment audits</li>
+          <li>Random sampling investigations</li>
+          <li>Rule-based compliance checks</li>
+          <li>Manual investigation</li>
+          <li>Reactive response</li>
+          <li>Issues found months later</li>
+        </ul>
+      </div>
+      <div class="compare-card new">
+        <h3><span style="color:var(--cyan)">&#9679;</span> With CareIntegrity.ai</h3>
+        <ul>
+          <li>Real-time ecosystem monitoring</li>
+          <li>AI-prioritised risk detection</li>
+          <li>Behavioural pattern analysis</li>
+          <li>Automated anomaly detection</li>
+          <li>Proactive intervention</li>
+          <li>Issues caught as they emerge</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- QUOTE -->
-<section class="quote-section">
+<section class="outcomes-section" id="outcomes">
   <div class="container">
-    <div class="quote">"Instead of detecting fraud at the claim level, CareIntegrity.AI detects it at the ecosystem relationship level — asking whether a provider behaves like a legitimate economic organism."</div>
-    <div class="quote-author">— CareIntegrity.AI Founding Principle</div>
+    <div class="sec-label green">Expected Outcomes</div>
+    <div class="sec-title">Measurable System<br>Improvements at Scale</div>
+    <div class="outcomes-grid">
+      <div class="ocard"><h4>Improved Integrity Visibility</h4><p>Real-time awareness across the entire scheme. See what's happening now, not what happened six months ago.</p></div>
+      <div class="ocard"><h4>Reduced Compliance Workload</h4><p>Prioritised alerts replace random audits. Investigation teams focus on the highest-risk entities first.</p></div>
+      <div class="ocard"><h4>Faster Detection</h4><p>Systemic issues caught early, not after the fact. From months to minutes.</p></div>
+      <div class="ocard highlight">
+        <div class="big-num">$1B–$3B</div>
+        <h4>Annual Savings Potential</h4>
+        <p>Potential reduction in scheme leakage annually, directly improving long-term scheme sustainability and protecting taxpayer investment.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- CTA -->
+<section class="vision-section">
+  <div class="container">
+    <div class="sec-label purple" style="text-align:center;display:block;margin:0 auto 16px">Strategic Value</div>
+    <div class="sec-title" style="text-align:center">A Foundational Upgrade to<br>National Welfare Infrastructure</div>
+    <p class="sec-desc" style="text-align:center;margin:0 auto 48px">CareIntegrity.ai is not a point solution — it is the beginning of unified integrity infrastructure across all government-funded care.</p>
+    <div class="vision-steps">
+      <div class="vstep"><div class="vstep-num">1</div><h4>NDIS</h4><p>Disability care ecosystem</p></div>
+      <div class="vstep"><div class="vstep-num">2</div><h4>Aged Care</h4><p>Senior support systems</p></div>
+      <div class="vstep"><div class="vstep-num">3</div><h4>Healthcare</h4><p>Medical & clinical services</p></div>
+      <div class="vstep"><div class="vstep-num">4</div><h4>National Welfare</h4><p>Unified integrity layer</p></div>
+    </div>
+    <div class="vision-callout">
+      <strong>The vision:</strong> A single, scalable integrity infrastructure that protects every government-funded care program — starting with the NDIS.
+    </div>
+  </div>
+</section>
+
 <section class="cta-section">
-  <h2>Ready to <span>Protect</span><br>the NDIS?</h2>
-  <p>See CareIntegrity.AI in action with real detection results, live analysis, and full enforcement workflows.</p>
-  <div class="hero-cta">
-    <a href="https://demo.careintegrity.ai" class="btn-primary">Access Live Demo</a>
-    <a href="mailto:hello@careintegrity.ai" class="btn-secondary">Contact Sales</a>
+  <h2>See <span class="grad">CareIntegrity.ai</span><br>in Action</h2>
+  <p style="font-size:18px;color:var(--muted);max-width:520px;margin:0 auto 36px;line-height:1.6">Live demo with real detection results, 8 AI engines, and full enforcement workflows. No signup required.</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+    <a href="https://demo.careintegrity.ai" class="btn-lg btn-cyan">Access Live Demo</a>
+    <a href="mailto:hello@careintegrity.ai" class="btn-lg btn-outline">Contact Us</a>
   </div>
-  <div style="margin-top:24px;font-size:14px;color:var(--muted)">Demo login: admin / NDISAdmin2025!</div>
+  <div style="margin-top:20px;font-size:14px;color:var(--muted)">Login: admin / NDISAdmin2025!</div>
 </section>
 
-<!-- TRUST -->
 <div class="trust-bar">
   <div class="trust-item">🇦🇺 Australian Built</div>
-  <div class="trust-item">🔒 SOC 2 Ready</div>
-  <div class="trust-item">📋 NDIS Compliant</div>
+  <div class="trust-item">🔒 Enterprise Security</div>
+  <div class="trust-item">📋 NDIS Aligned</div>
   <div class="trust-item">🏛️ Government Grade</div>
   <div class="trust-item">⚡ Real-Time Detection</div>
+  <div class="trust-item">🤖 8 AI Engines</div>
 </div>
 
-<!-- FOOTER -->
 <footer>
-  <div class="logo">CareIntegrity.AI</div>
-  <p>NDIS Network Integrity & Fraud Intelligence Platform</p>
+  <div class="logo">CareIntegrity.ai</div>
+  <p>Strengthening Trust, Sustainability & Integrity in the NDIS</p>
   <div class="links">
-    <a href="https://demo.careintegrity.ai">Demo</a>
+    <a href="https://demo.careintegrity.ai">Live Demo</a>
     <a href="mailto:hello@careintegrity.ai">Contact</a>
     <a href="https://github.com/uozef/careintegrity.net">GitHub</a>
   </div>
-  <p style="margin-top:24px">&copy; 2026 CareIntegrity.AI. All rights reserved. Built in Australia.</p>
+  <p style="margin-top:20px">&copy; 2026 CareIntegrity.ai — Built in Australia for Australia</p>
 </footer>
 
 </body>
