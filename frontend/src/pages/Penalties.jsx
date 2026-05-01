@@ -106,21 +106,21 @@ export default function Penalties() {
                 {selectedPenalty.description}
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 6, marginTop: 20 }}>
               {selectedPenalty.status !== 'paid' && (
-                <button className="btn success" onClick={() => handleUpdateStatus(selectedPenalty.id, 'paid')}>Mark as Paid</button>
+                <button className="btn success sm" onClick={() => handleUpdateStatus(selectedPenalty.id, 'paid')}>Paid</button>
               )}
               {selectedPenalty.status !== 'disputed' && (
-                <button className="btn danger" onClick={() => handleUpdateStatus(selectedPenalty.id, 'disputed')}>Mark Disputed</button>
+                <button className="btn danger sm" onClick={() => handleUpdateStatus(selectedPenalty.id, 'disputed')}>Disputed</button>
               )}
               {!selectedPenalty.email_sent && (
-                <button className="btn primary" onClick={() => { handleSendEmail(selectedPenalty.id); setSelectedPenalty(null) }}>Send Email</button>
+                <button className="btn primary sm" onClick={() => { handleSendEmail(selectedPenalty.id); setSelectedPenalty(null) }}>Email</button>
               )}
               {selectedPenalty.status !== 'cancelled' && (
-                <button className="btn" onClick={() => handleUpdateStatus(selectedPenalty.id, 'cancelled')}>Cancel Penalty</button>
+                <button className="btn sm" onClick={() => handleUpdateStatus(selectedPenalty.id, 'cancelled')}>Cancel</button>
               )}
             </div>
-            <button className="btn" style={{ width: '100%', marginTop: 8 }} onClick={() => setSelectedPenalty(null)}>Close</button>
+            <button className="btn" style={{ width: '100%', marginTop: 6 }} onClick={() => setSelectedPenalty(null)}>Close</button>
           </div>
         </div>
       )}
