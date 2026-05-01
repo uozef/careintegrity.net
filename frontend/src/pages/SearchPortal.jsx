@@ -20,6 +20,8 @@ export default function SearchPortal() {
   const [selectedEntity, setSelectedEntity] = useState(null)
   const [entityDetail, setEntityDetail] = useState(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
+  const [page, setPage] = useState(0)
+  const PAGE_SIZE = 15
 
   // Load initial data — show top providers on page load
   const { data: initialProviders } = useApi('/providers', [])
@@ -136,7 +138,7 @@ export default function SearchPortal() {
                 <div style={{ padding: 30, textAlign: 'center', color: 'var(--text-muted)' }}>No results found</div>
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {results.results?.map(r => (
+                {results.results?.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(r => (
                   <div key={r.id} onClick={() => selectEntity(r)}
                     style={{
                       padding: '12px 14px', borderRadius: 10, cursor: 'pointer',
@@ -167,6 +169,15 @@ export default function SearchPortal() {
                   </div>
                 ))}
               </div>
+              {results.results?.length > PAGE_SIZE && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 16 }}>
+                  <button className="btn sm" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Previous</button>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                    Page {page + 1} of {Math.ceil(results.results.length / PAGE_SIZE)}
+                  </span>
+                  <button className="btn sm" disabled={(page + 1) * PAGE_SIZE >= results.results.length} onClick={() => setPage(p => p + 1)}>Next</button>
+                </div>
+              )}
             </div>
           )}
         </div>

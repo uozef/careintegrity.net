@@ -106,21 +106,21 @@ export default function Penalties() {
                 {selectedPenalty.description}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 6, marginTop: 20, flexWrap: 'wrap' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 20 }}>
               {selectedPenalty.status !== 'paid' && (
                 <button className="btn success" onClick={() => handleUpdateStatus(selectedPenalty.id, 'paid')}>Mark as Paid</button>
               )}
               {selectedPenalty.status !== 'disputed' && (
                 <button className="btn danger" onClick={() => handleUpdateStatus(selectedPenalty.id, 'disputed')}>Mark Disputed</button>
               )}
-              {selectedPenalty.status !== 'cancelled' && (
-                <button className="btn" onClick={() => handleUpdateStatus(selectedPenalty.id, 'cancelled')}>Cancel</button>
-              )}
               {!selectedPenalty.email_sent && (
                 <button className="btn primary" onClick={() => { handleSendEmail(selectedPenalty.id); setSelectedPenalty(null) }}>Send Email</button>
               )}
-              <button className="btn" onClick={() => setSelectedPenalty(null)}>Close</button>
+              {selectedPenalty.status !== 'cancelled' && (
+                <button className="btn" onClick={() => handleUpdateStatus(selectedPenalty.id, 'cancelled')}>Cancel Penalty</button>
+              )}
             </div>
+            <button className="btn" style={{ width: '100%', marginTop: 8 }} onClick={() => setSelectedPenalty(null)}>Close</button>
           </div>
         </div>
       )}

@@ -43,7 +43,7 @@ export default function FinancialTracker() {
         <p>Track fraud value detected, penalties issued, collections, and recovery rates</p>
       </div>
 
-      <div className="stats-grid">
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         <div className="stat-card" style={{ borderLeft: '3px solid var(--accent-red)' }}>
           <div className="stat-label">Fraud Detected</div>
           <div className="stat-value critical count-up">{formatMoney(summary?.total_fraud_detected_value)}</div>

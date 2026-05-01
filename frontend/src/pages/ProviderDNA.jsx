@@ -449,10 +449,10 @@ export default function ProviderDNA() {
                   const first = detail.drift_timeline[0]
                   return (
                     <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Drift ({first.period} → {latest.period})</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Drift ({first.period} to {latest.period})</div>
                       {[
-                        ['Participants', `${first.participants} → ${latest.participants}`, latest.participants > first.participants * 3 ? 'var(--accent-red)' : 'var(--text-primary)'],
-                        ['Workers', `${first.workers} → ${latest.workers}`, 'var(--text-primary)'],
+                        ['Participants', `${first.participants} to ${latest.participants}`, latest.participants > first.participants * 3 ? 'var(--accent-red)' : 'var(--text-primary)'],
+                        ['Workers', `${first.workers} to ${latest.workers}`, 'var(--text-primary)'],
                         ['Staff Ratio', latest.staffing_ratio?.toFixed(1), latest.staffing_ratio > 20 ? 'var(--accent-red)' : 'var(--text-primary)'],
                         ['Session Avg', `${latest.avg_session_duration?.toFixed(1)}h`, 'var(--text-primary)'],
                       ].map(([k, v, color]) => (
@@ -460,9 +460,8 @@ export default function ProviderDNA() {
                           <span style={{ color: 'var(--text-secondary)' }}>{k}</span>
                           <span style={{ fontWeight: 700, color }}>{v}</span>
                         </div>
-                      ))
-                    })()
-                  </div>
+                      ))}
+                    </div>
                   )
                 })()}
 

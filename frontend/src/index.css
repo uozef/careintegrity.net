@@ -489,6 +489,11 @@ body {
   transform: translateX(2px);
 }
 
+.alert-item:focus, .alert-item:focus-visible {
+  outline: none;
+  border-color: var(--accent-blue);
+}
+
 .alert-severity {
   width: 8px;
   height: 8px;

@@ -77,7 +77,7 @@ export default function UserManagement() {
       </div>
 
       {/* Stats */}
-      <div className="stats-grid" style={{ marginBottom: 20 }}>
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 20 }}>
         <div className="stat-card">
           <div className="stat-label">Total Users</div>
           <div className="stat-value info">{usersData.length}</div>
