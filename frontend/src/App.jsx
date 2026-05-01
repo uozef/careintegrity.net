@@ -28,6 +28,7 @@ import Compliance from './pages/Compliance'
 import Tipoffs from './pages/Tipoffs'
 import SystemHealth from './pages/SystemHealth'
 import RiskHeatmap from './pages/RiskHeatmap'
+import SystemSettings from './pages/SystemSettings'
 
 export const ThemeContext = createContext()
 
@@ -89,6 +90,7 @@ export default function App() {
       case 'tipoffs': return <Tipoffs />
       case 'system-health': return <SystemHealth />
       case 'risk-heatmap': return <RiskHeatmap />
+      case 'settings': return <SystemSettings />
       default: return <Dashboard onNavigate={navigate} />
     }
   }

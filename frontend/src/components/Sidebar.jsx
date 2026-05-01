@@ -50,6 +50,7 @@ const NAV_ITEMS = [
       { id: 'users', icon: '\u263A', label: 'User Management' },
       { id: 'compliance', icon: '\u2611', label: 'Compliance' },
       { id: 'system-health', icon: '\u2665', label: 'System Health' },
+      { id: 'settings', icon: '\u2638', label: 'System Settings' },
     ]
   }
 ]
