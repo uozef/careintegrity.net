@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareIntegrity.AI — 8 Detection Engines</title>
+<meta name="description" content="Deep dive into CareIntegrity.AI's 8 AI-powered fraud detection engines. Network analysis, behavioural drift, time constraints, DNA embeddings, simulation, collusion, invoice testing, and custom rules.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e07a1e'/><text x='50' y='68' text-anchor='middle' font-size='60' font-weight='900' fill='white'>CI</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fff;--bg2:#faf8f5;--card:#fff;--card-alt:#fef7ed;--border:#e8dfd4;--orange:#e07a1e;--orange-dark:#c4650f;--navy:#1a2744;--green:#0d8a5e;--red:#c93b3b;--text:#1a2744;--text2:#3d4f6a;--muted:#7a869a;--shadow:0 2px 16px rgba(26,39,68,0.06);--shadow-lg:0 8px 32px rgba(26,39,68,0.08)}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:var(--orange);text-decoration:none}a:hover{color:var(--orange-dark)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 32px;height:64px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+nav .logo{font-size:20px;font-weight:900;color:var(--navy)}nav .logo span{color:var(--orange)}
+nav .nav-links{display:flex;gap:24px;align-items:center}nav .nav-links a{font-size:14px;color:var(--muted);font-weight:500}nav .nav-links a:hover{color:var(--navy)}
+.nav-btn{padding:9px 22px;background:var(--orange);border:none;border-radius:8px;color:#fff !important;font-size:13px;font-weight:700;cursor:pointer}
+
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#fef9f3,#fff)}
+.hero h1{font-size:clamp(32px,4vw,52px);font-weight:900;letter-spacing:-2px;color:var(--navy);margin-bottom:12px}
+.hero h1 span{color:var(--orange)}
+.hero p{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.6}
+
+.engine-nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:64px;z-index:50}
+.engine-nav a{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;color:var(--muted);border:1px solid var(--border);background:#fff;transition:all 0.2s}
+.engine-nav a:hover,.engine-nav a:target{background:var(--orange);color:#fff !important;border-color:var(--orange)}
+
+.container{max-width:1000px;margin:0 auto}
+section.engine{padding:80px 24px;border-bottom:1px solid var(--border)}
+section.engine:nth-child(even){background:var(--bg2)}
+.engine-header{display:flex;align-items:flex-start;gap:20px;margin-bottom:32px}
+.engine-num{font-size:48px;font-weight:900;color:rgba(224,122,30,0.12);line-height:1;flex-shrink:0;min-width:60px}
+.engine-header h2{font-size:28px;font-weight:900;letter-spacing:-1px;color:var(--navy);margin-bottom:4px}
+.engine-header .tag{display:inline-block;padding:4px 12px;border-radius:5px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:rgba(224,122,30,0.06);color:var(--orange);margin-top:6px}
+.engine-intro{font-size:17px;color:var(--text2);line-height:1.7;margin-bottom:32px;max-width:800px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+.detail-card{padding:24px;border-radius:14px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)}
+.detail-card h3{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.detail-card p{font-size:14px;color:var(--muted);line-height:1.6}
+.detail-card ul{list-style:none;padding:0;margin-top:10px}
+.detail-card li{padding:6px 0;font-size:14px;color:var(--text2);border-bottom:1px solid rgba(232,223,212,0.5)}
+.detail-card li::before{content:"-- ";color:var(--orange);font-weight:700}
+.detail-card.highlight{background:var(--card-alt);border-color:rgba(224,122,30,0.2)}
+
+.scenario{padding:20px 24px;border-radius:12px;background:var(--card-alt);border:1px solid rgba(224,122,30,0.12);margin-bottom:16px}
+.scenario h4{font-size:14px;font-weight:800;color:var(--orange);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.scenario p{font-size:14px;color:var(--text2);line-height:1.6}
+
+.metric-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.metric{padding:16px 20px;border-radius:10px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);min-width:140px;flex:1}
+.metric .val{font-size:28px;font-weight:900;color:var(--orange);letter-spacing:-1px}
+.metric .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-top:2px}
+
+.cta-bar{text-align:center;padding:60px 24px;background:linear-gradient(180deg,var(--bg2),#fef7ed)}
+.cta-bar h2{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px;letter-spacing:-1px}
+.cta-bar a{display:inline-block;padding:14px 32px;background:var(--orange);border-radius:10px;color:#fff !important;font-size:15px;font-weight:800;margin-top:12px;transition:all 0.2s}
+.cta-bar a:hover{background:var(--orange-dark);transform:translateY(-2px)}
+
+footer{padding:40px 24px;background:var(--navy);text-align:center}
+footer p{font-size:12px;color:rgba(255,255,255,0.5)}
+footer .logo{font-size:18px;font-weight:900;color:#fff;margin-bottom:8px}footer .logo span{color:var(--orange)}
+
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}.engine-header{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="technical.html">Technical</a>
+    <a href="https://demo.careintegrity.ai" class="nav-btn">Live Demo</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>8 <span>AI Engines</span> Working in Concert</h1>
+  <p>Each engine analyses a different dimension of the NDIS ecosystem. Together, they create an integrity intelligence layer that no single-engine system can match.</p>
+</div>
+
+<div class="engine-nav">
+  <a href="#e1">01 Network Graph</a>
+  <a href="#e2">02 Behavioural Drift</a>
+  <a href="#e3">03 Time Budget</a>
+  <a href="#e4">04 Provider DNA</a>
+  <a href="#e5">05 Simulation</a>
+  <a href="#e6">06 Collusion</a>
+  <a href="#e7">07 Invoice Testing</a>
+  <a href="#e8">08 Rule Engine</a>
+</div>
+
+<!-- ENGINE 1 -->
+<section class="engine" id="e1">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">01</div><div><h2>Network Graph Analysis</h2><div class="tag">Closed-Loop Detection</div></div></div>
+  <p class="engine-intro">Traditional fraud detection examines individual claims in isolation. Network Graph Analysis maps the entire NDIS ecosystem as a connected graph -- providers, participants, workers, locations, and the relationships between them. This reveals hidden patterns that are completely invisible at the transaction level.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">550+</div><div class="lbl">Graph Nodes</div></div>
+    <div class="metric"><div class="val">10K+</div><div class="lbl">Relationship Edges</div></div>
+    <div class="metric"><div class="val">5</div><div class="lbl">Entity Types</div></div>
+    <div class="metric"><div class="val">Real-time</div><div class="lbl">Graph Updates</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>What It Detects</h3><ul><li>Closed-loop money flows between connected providers</li><li>Invoice cycling through intermediary entities</li><li>Controlled provider clusters with shared infrastructure</li><li>Shared staff networks indicating coordinated operations</li><li>Shared addresses across multiple registered providers</li></ul></div>
+    <div class="detail-card"><h3>How It Works</h3><p>The engine builds a continuously updating directed graph using NetworkX. Nodes represent providers, participants, workers, and locations. Edges are weighted by billing volume, service relationships, and employment links. Cycle detection algorithms identify closed-loop flows, while community detection reveals suspicious clusters.</p></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>Provider A pays Worker X. Worker X is also registered with Provider B. Provider B bills NDIS for services to Provider A's clients. The money flows in a circle -- this is invoice cycling, and it's invisible without graph analysis. CareIntegrity.AI detects this automatically by finding cycles in the provider-worker-participant graph.</p></div>
+  <div class="scenario"><h4>Impact</h4><p>In the demo dataset alone, the Network Graph engine identified 12 closed-loop alerts and multiple shared-staff clusters -- patterns that would take human auditors months to uncover through manual investigation.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 2 -->
+<section class="engine" id="e2">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">02</div><div><h2>Behavioural Drift Engine</h2><div class="tag">Structural Impossibility</div></div></div>
+  <p class="engine-intro">Fraudulent providers don't start fraudulent -- they drift. The Behavioural Drift Engine tracks each provider's "fingerprint" over time: billing patterns, session lengths, staffing ratios, geographic spread, and service mix. When a provider's behaviour changes faster than any legitimate business could, the engine flags it as structurally impossible.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">12</div><div class="lbl">Monthly Fingerprints</div></div>
+    <div class="metric"><div class="val">15+</div><div class="lbl">Tracked Dimensions</div></div>
+    <div class="metric"><div class="val">222</div><div class="lbl">Alerts Generated</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>What It Tracks</h3><ul><li>Average hours billed per participant per month</li><li>Session length distributions and variance</li><li>Participant growth rate vs workforce growth</li><li>Staffing ratio changes (participants per worker)</li><li>Geographic spread of service locations</li><li>Weekend and night billing ratios</li><li>Service mix evolution over time</li></ul></div>
+    <div class="detail-card"><h3>Fraud Signals</h3><ul><li>Impossible acceleration: 5 to 80 participants in 6 weeks with no new staff</li><li>Billing spikes: 3x+ monthly billing increase without explanation</li><li>Staffing anomalies: 20:1+ participant-to-worker ratios</li><li>Time-of-day shifts: sudden move to after-hours billing</li><li>Geographic expansion without physical presence</li></ul></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>A small therapy provider with 5 participants and 2 workers suddenly grows to 80 participants in 6 weeks -- but still has the same 2 workers. This is a structural impossibility. No legitimate provider can serve 40 participants per worker. The Behavioural Drift Engine catches this by comparing growth trajectories against workforce capacity.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 3 -->
+<section class="engine" id="e3">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">03</div><div><h2>Time Budget Constraints</h2><div class="tag">Physical Impossibility</div></div></div>
+  <p class="engine-intro">Every human has exactly 24 hours in a day. Every worker can only be in one place at a time. Every journey between locations takes time. The Time Budget engine enforces these immutable physical laws against claimed service delivery, revealing fabricated services that violate the laws of physics.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">100</div><div class="lbl">Time Impossibilities</div></div>
+    <div class="metric"><div class="val">50</div><div class="lbl">Excessive Hours</div></div>
+    <div class="metric"><div class="val">50</div><div class="lbl">Travel Impossibilities</div></div>
+    <div class="metric"><div class="val">100</div><div class="lbl">Overservicing Flags</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>Three Constraint Models</h3><ul><li>Worker simultaneity: Cannot bill at two locations at the same time</li><li>Daily capacity: No worker can deliver 24 hours of care in a day</li><li>Travel feasibility: Cannot travel 60km between sessions in 10 minutes</li></ul></div>
+    <div class="detail-card"><h3>Participant Protection</h3><ul><li>Weekly hour allocation monitoring</li><li>Budget consumption tracking against plan limits</li><li>Service stacking detection (excessive concurrent therapies)</li><li>Peak week analysis vs allocated support hours</li></ul></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>Worker WRK-0005 is billed for a 3-hour session in Parramatta ending at 2:00 PM, and another 3-hour session in Campbelltown starting at 2:10 PM. These locations are 35km apart. Even at highway speed, this journey takes 30+ minutes. The Time Budget engine flags this as a travel impossibility -- one of these sessions is fabricated.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 4 -->
+<section class="engine" id="e4">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">04</div><div><h2>Provider DNA Embeddings</h2><div class="tag">AI Representation Learning</div></div></div>
+  <p class="engine-intro">Every provider has a "DNA" -- a unique pattern of how they bill, who they serve, what services they deliver, and when they work. The Provider DNA engine converts each provider into a high-dimensional vector embedding, then uses PCA and distance metrics to detect mutations, cluster anomalies, and providers that suddenly change their fundamental nature.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">35</div><div class="lbl">Embedding Dimensions</div></div>
+    <div class="metric"><div class="val">60</div><div class="lbl">Providers Vectorised</div></div>
+    <div class="metric"><div class="val">30</div><div class="lbl">Mutations Detected</div></div>
+    <div class="metric"><div class="val">170</div><div class="lbl">Cluster Anomalies</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>Embedding Features</h3><ul><li>Service mix proportions (12 NDIS service types)</li><li>Participant demographics served (7 disability types)</li><li>Average session duration and rate</li><li>Weekend and night billing ratios</li><li>Geographic spread and billing intensity</li><li>Time distribution entropy (8 time-of-day bins)</li><li>Rate variance and session length variance</li></ul></div>
+    <div class="detail-card"><h3>Detection Methods</h3><ul><li>Cosine distance between monthly embeddings (mutation detection)</li><li>Euclidean distance for magnitude changes</li><li>PCA projection to 2D with force-spread for visualisation</li><li>Pairwise similarity matrix against known fraud providers</li><li>Cluster proximity analysis using normalised vectors</li></ul></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>A registered Occupational Therapy provider's DNA suddenly shifts -- their embedding shows a dramatic move toward SIL (Supported Independent Living) billing patterns within 2 months. Their service mix goes from 90% therapy to 70% SIL. This is a semantic role shift anomaly -- legitimate providers don't fundamentally change what they do overnight. This often indicates the provider has been taken over or is exploiting a new billing category.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 5 -->
+<section class="engine" id="e5">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">05</div><div><h2>Synthetic Simulation</h2><div class="tag">Baseline Comparison</div></div></div>
+  <p class="engine-intro">What does "normal care" actually look like? The Synthetic Simulation engine answers this by generating realistic care baselines for each participant based on their support needs level, disability type, and plan allocation. It then compares actual billing against these baselines to detect over-servicing, inflated frequency, and unnecessary service stacking.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">300</div><div class="lbl">Participant Baselines</div></div>
+    <div class="metric"><div class="val">4</div><div class="lbl">Support Levels</div></div>
+    <div class="metric"><div class="val">100</div><div class="lbl">Anomalies Detected</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>Baseline Parameters</h3><ul><li>Expected weekly hours by support needs level</li><li>Expected sessions per week</li><li>Maximum concurrent service types</li><li>Expected therapy frequency</li><li>Weekend service ratio expectations</li><li>Weekly cost benchmarks</li></ul></div>
+    <div class="detail-card highlight"><h3>What It Catches</h3><ul><li>Over-servicing: actual hours 2x+ above expected baseline</li><li>Inflated frequency: 3x more sessions than clinically justified</li><li>Service stacking: OT + Psychology + Speech + Support Work all daily</li><li>Excessive therapy: therapy sessions far exceeding clinical norms</li></ul></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>A participant with "low" support needs (expected ~8 hours/week) is receiving 35 hours/week from a single provider -- 4x the expected baseline. They're simultaneously receiving Occupational Therapy, Psychology, Speech Therapy, and Support Work every day. The Synthetic Simulation engine flags this as service stacking -- there's no clinical reason for this intensity of concurrent services at a low support level.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 6 -->
+<section class="engine" id="e6">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">06</div><div><h2>Collusion Detection</h2><div class="tag">Organised Fraud</div></div></div>
+  <p class="engine-intro">The most damaging NDIS fraud isn't individual -- it's organised. Provider cartels coordinate to maximise billing through shared staff, shared addresses, and circular referral patterns. The Collusion Detection engine uses graph community detection algorithms to identify these hidden networks, rendered as an interactive 3D collusion map.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">60</div><div class="lbl">Providers Analysed</div></div>
+    <div class="metric"><div class="val">880</div><div class="lbl">Provider-to-Provider Links</div></div>
+    <div class="metric"><div class="val">3D</div><div class="lbl">Rotating Visualisation</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>Collusion Signals</h3><ul><li>Shared staff: workers registered across multiple providers</li><li>Shared participants: same clients billed by connected providers</li><li>Shared addresses: multiple providers at one physical location</li><li>Referral loops: participants bouncing between the same 2-3 providers</li><li>Common phone numbers, ABN structures, or ownership</li></ul></div>
+    <div class="detail-card"><h3>Detection Method</h3><p>The engine builds a weighted provider affinity graph. Edge weights combine shared staff (3x weight), shared locations (2x weight), and shared participants (1x weight). Greedy modularity community detection identifies tightly-connected clusters. High-density clusters with multiple shared resources are flagged as potential cartels.</p></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>Four providers (PRV-0003, PRV-0007, PRV-0009, PRV-0011) share 8 workers between them, operate from 3 common addresses, and bill the same 45 participants. The Collusion Detection engine identifies this as a provider cartel with 0.62 network density -- these providers are operationally the same entity hiding behind multiple registrations to maximise billing.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 7 -->
+<section class="engine" id="e7">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">07</div><div><h2>Invoice Pressure Testing</h2><div class="tag">Forensic Z-Score Analysis</div></div></div>
+  <p class="engine-intro">Every single invoice is scored against multiple baselines simultaneously -- the provider's own history, the participant's pattern, peer group averages, workforce constraints, and geographic feasibility. The result is a composite fraud likelihood score that combines statistical deviation, network risk, and behavioural drift into a single actionable number.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">98K+</div><div class="lbl">Invoices Tested</div></div>
+    <div class="metric"><div class="val">3</div><div class="lbl">Scoring Dimensions</div></div>
+    <div class="metric"><div class="val">84%</div><div class="lbl">Highest Score</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>Scoring Formula</h3><p style="font-family:monospace;font-size:15px;color:var(--orange);font-weight:700;margin-bottom:12px">Fraud Likelihood = Deviation(0.4) x Network Risk(0.3) x Behavioural Drift(0.3)</p><ul><li>Deviation: z-scores against provider, participant, and global baselines</li><li>Network Risk: provider's position in the ecosystem graph</li><li>Behavioural Drift: how much the provider has changed recently</li></ul></div>
+    <div class="detail-card"><h3>Officer Actions</h3><ul><li>Forensic drill-down with z-score breakdown per dimension</li><li>Provider and participant context panels</li><li>One-click reject, approve, flag, or issue penalty</li><li>Batch analysis scheduling (5/10/15/30/60 minute intervals)</li><li>Configurable score thresholds for auto-flagging</li></ul></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>Invoice CLM-45892 charges $847 for a 9.5-hour session at $89/hour. The provider's average is 3.2 hours at $62/hour (hours z-score: +2.8 sigma). The participant normally receives 2-hour sessions (participant z-score: +3.1 sigma). The provider is also flagged by the Network Graph as part of a shared-staff cluster. Combined fraud likelihood: 78%. The fraud officer reviews the forensic evidence and issues a penalty with one click.</p></div>
+</div>
+</section>
+
+<!-- ENGINE 8 -->
+<section class="engine" id="e8">
+<div class="container">
+  <div class="engine-header"><div class="engine-num">08</div><div><h2>Custom Rule Engine</h2><div class="tag">Configurable Rules</div></div></div>
+  <p class="engine-intro">While the 7 AI engines detect patterns automatically, experienced fraud officers often know specific red flags unique to their region, provider type, or current investigation. The Custom Rule Engine lets officers define their own detection rules with multiple conditions, operators, and AND/OR logic -- turning institutional knowledge into automated detection.</p>
+  <div class="metric-row">
+    <div class="metric"><div class="val">7</div><div class="lbl">Default Rules</div></div>
+    <div class="metric"><div class="val">10</div><div class="lbl">Available Fields</div></div>
+    <div class="metric"><div class="val">16.8K</div><div class="lbl">Matches Found</div></div>
+    <div class="metric"><div class="val">7</div><div class="lbl">Operators</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="detail-card"><h3>Rule Capabilities</h3><ul><li>Multiple conditions per rule (unlimited)</li><li>AND/OR logic between conditions</li><li>Fields: hours, rate, amount, start hour, weekend flag, service type, provider/worker ID</li><li>Operators: greater than, less than, equals, not equals, contains</li><li>Severity levels: critical, high, medium, low</li><li>Toggle rules on/off with instant re-evaluation</li></ul></div>
+    <div class="detail-card highlight"><h3>Default Rules Included</h3><ul><li>High hourly rate (above $95/hour)</li><li>Excessive session duration (over 8 hours)</li><li>After-hours billing (midnight to 5 AM)</li><li>High value claims (over $800 per invoice)</li><li>Weekend + long hours (weekend claims over 6 hours)</li><li>Late night high-value (after 10 PM, over $500)</li><li>Suspiciously round hours with high amounts</li></ul></div>
+  </div>
+  <div class="scenario"><h4>Real-World Scenario</h4><p>A fraud officer investigating SIL providers notices a pattern: providers billing exactly 8.0 hours at exactly $70/hour every day, across multiple participants. She creates a custom rule: hours == 8.0 AND rate == 70.0 AND service_type contains "SIL". The rule immediately finds 340 matching claims across 3 providers -- confirming a coordinated billing template being used to generate fraudulent invoices.</p></div>
+</div>
+</section>
+
+<div class="cta-bar">
+  <h2>See All 8 Engines in Action</h2>
+  <p style="font-size:16px;color:var(--muted);margin-bottom:8px">Live demo processing 98,966 claims across 60 providers in real-time.</p>
+  <a href="https://demo.careintegrity.ai">Access Live Demo</a>
+  <div style="margin-top:12px;font-size:13px;color:var(--muted)">Login: admin / NDISAdmin2025!</div>
+</div>
+
+<footer>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <p>Strengthening Trust, Sustainability and Integrity in the NDIS</p>
+  <p style="margin-top:12px">&copy; 2026 CareIntegrity.ai -- Built in Australia</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareIntegrity.AI -- 4-Layer Intelligence Architecture</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e07a1e'/><text x='50' y='68' text-anchor='middle' font-size='60' font-weight='900' fill='white'>CI</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fff;--bg2:#faf8f5;--card:#fff;--card-alt:#fef7ed;--border:#e8dfd4;--orange:#e07a1e;--orange-dark:#c4650f;--navy:#1a2744;--green:#0d8a5e;--red:#c93b3b;--text:#1a2744;--text2:#3d4f6a;--muted:#7a869a;--shadow:0 2px 16px rgba(26,39,68,0.06);--shadow-lg:0 8px 32px rgba(26,39,68,0.08)}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:var(--orange);text-decoration:none}a:hover{color:var(--orange-dark)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 32px;height:64px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+nav .logo{font-size:20px;font-weight:900;color:var(--navy)}nav .logo span{color:var(--orange)}
+nav a.link{font-size:14px;color:var(--muted);font-weight:500}nav a.link:hover{color:var(--navy)}
+.nav-btn{padding:9px 22px;background:var(--orange);border:none;border-radius:8px;color:#fff !important;font-size:13px;font-weight:700;cursor:pointer}
+
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#fef9f3,#fff)}
+.hero h1{font-size:clamp(30px,4vw,48px);font-weight:900;letter-spacing:-2px;color:var(--navy);margin-bottom:12px}
+.hero h1 span{color:var(--orange)}
+.hero p{font-size:17px;color:var(--muted);max-width:640px;margin:0 auto;line-height:1.65}
+
+.layer-nav{display:flex;justify-content:center;gap:8px;padding:20px 24px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:64px;z-index:50}
+.layer-nav a{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:700;color:var(--muted);border:1px solid var(--border);background:#fff;transition:all 0.2s}
+.layer-nav a:hover{background:var(--orange);color:#fff !important;border-color:var(--orange)}
+
+.container{max-width:1000px;margin:0 auto}
+section.layer-section{padding:80px 24px;border-bottom:1px solid var(--border)}
+section.layer-section:nth-child(even){background:var(--bg2)}
+
+.lh{display:flex;align-items:flex-start;gap:20px;margin-bottom:28px}
+.lh-num{width:56px;height:56px;border-radius:14px;background:var(--card-alt);border:1px solid rgba(224,122,30,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:var(--orange);flex-shrink:0}
+.lh h2{font-size:28px;font-weight:900;letter-spacing:-1px;color:var(--navy)}
+.lh .subtitle{font-size:14px;color:var(--orange);font-weight:700;margin-top:4px}
+.intro{font-size:17px;color:var(--text2);line-height:1.7;margin-bottom:32px;max-width:800px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.card{padding:24px;border-radius:14px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)}
+.card h3{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.card p{font-size:14px;color:var(--muted);line-height:1.6}
+.card ul{list-style:none;padding:0;margin-top:8px}
+.card li{padding:5px 0;font-size:13px;color:var(--text2);border-bottom:1px solid rgba(232,223,212,0.5)}
+.card li::before{content:"-- ";color:var(--orange);font-weight:700}
+.card.alt{background:var(--card-alt);border-color:rgba(224,122,30,0.15)}
+
+.diagram{padding:32px;border-radius:16px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:24px;text-align:center}
+.diagram h3{font-size:14px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0}
+.flow-node{padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--border);background:#fff}
+.flow-node.provider{border-color:rgba(59,130,246,0.3);color:#3b6fb6;background:rgba(59,130,246,0.04)}
+.flow-node.worker{border-color:rgba(13,138,94,0.3);color:var(--green);background:rgba(13,138,94,0.04)}
+.flow-node.participant{border-color:rgba(139,92,246,0.3);color:#6b5ca5;background:rgba(139,92,246,0.04)}
+.flow-node.location{border-color:rgba(224,122,30,0.3);color:var(--orange);background:rgba(224,122,30,0.04)}
+.flow-node.alert{border-color:rgba(201,59,59,0.3);color:var(--red);background:rgba(201,59,59,0.04)}
+.flow-arrow{font-size:20px;color:var(--muted)}
+
+.example{padding:20px 24px;border-radius:12px;border-left:3px solid var(--orange);background:var(--card-alt);margin-bottom:16px}
+.example h4{font-size:14px;font-weight:800;color:var(--orange);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.example p{font-size:14px;color:var(--text2);line-height:1.6}
+
+.metric-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.metric{padding:14px 18px;border-radius:10px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);flex:1;min-width:120px}
+.metric .val{font-size:24px;font-weight:900;color:var(--orange);letter-spacing:-1px}
+.metric .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-top:2px}
+
+.timeline{display:flex;flex-direction:column;gap:0;margin:16px 0}
+.timeline-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.timeline-dot{width:12px;height:12px;border-radius:50%;background:var(--orange);margin-top:4px;flex-shrink:0}
+.timeline-item:nth-child(2) .timeline-dot{background:#3b6fb6}
+.timeline-item:nth-child(3) .timeline-dot{background:var(--green)}
+.timeline-item:nth-child(4) .timeline-dot{background:var(--red)}
+.timeline h4{font-size:14px;font-weight:700;color:var(--navy)}
+.timeline p{font-size:13px;color:var(--muted);line-height:1.5}
+
+.cta-bar{text-align:center;padding:60px 24px;background:linear-gradient(180deg,var(--bg2),#fef7ed)}
+.cta-bar h2{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px;letter-spacing:-1px}
+.cta-bar a.btn{display:inline-block;padding:14px 32px;background:var(--orange);border-radius:10px;color:#fff !important;font-size:15px;font-weight:800;transition:all 0.2s}
+.cta-bar a.btn:hover{background:var(--orange-dark);transform:translateY(-2px)}
+
+footer{padding:40px 24px;background:var(--navy);text-align:center}
+footer .logo{font-size:18px;font-weight:900;color:#fff;margin-bottom:8px}footer .logo span{color:var(--orange)}
+footer p{font-size:12px;color:rgba(255,255,255,0.5)}
+
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.lh{flex-direction:column}.flow{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <div style="display:flex;gap:24px;align-items:center">
+    <a href="index.html" class="link">Home</a>
+    <a href="engines.html" class="link">Engines</a>
+    <a href="technical.html" class="link">Technical</a>
+    <a href="https://demo.careintegrity.ai" class="nav-btn">Live Demo</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>A <span>4-Layer</span> Integrity Intelligence System</h1>
+  <p>Each layer adds a dimension of intelligence -- from raw relationship mapping through temporal modeling, physical validation, and graph-based risk scoring. Together they produce a continuously updated integrity signal that scales with the NDIS.</p>
+</div>
+
+<div class="layer-nav">
+  <a href="#l1">Layer 1: Care Graph</a>
+  <a href="#l2">Layer 2: Behaviour</a>
+  <a href="#l3">Layer 3: Feasibility</a>
+  <a href="#l4">Layer 4: AI Risk</a>
+</div>
+
+<!-- LAYER 1 -->
+<section class="layer-section" id="l1">
+<div class="container">
+  <div class="lh"><div class="lh-num">1</div><div><h2>Care Network Graph</h2><div class="subtitle">Multi-Relational Dynamic Graph</div></div></div>
+  <p class="intro">The foundation of CareIntegrity.AI. Instead of storing claims as flat rows in a database, Layer 1 builds a continuously updating knowledge graph of the entire care economy -- mapping every provider, participant, worker, location, and the relationships between them.</p>
+
+  <div class="diagram">
+    <h3>Graph Entity Model</h3>
+    <div class="flow">
+      <div class="flow-node provider">Provider</div>
+      <div class="flow-arrow">&harr;</div>
+      <div class="flow-node worker">Worker</div>
+      <div class="flow-arrow">&harr;</div>
+      <div class="flow-node participant">Participant</div>
+    </div>
+    <div class="flow">
+      <div class="flow-node provider">Provider</div>
+      <div class="flow-arrow">&harr;</div>
+      <div class="flow-node location">Location</div>
+      <div class="flow-arrow">&harr;</div>
+      <div class="flow-node provider">Provider</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:12px">Edges represent: service delivery, billing, employment, co-location, shared staffing</p>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric"><div class="val">5</div><div class="lbl">Entity Types</div></div>
+    <div class="metric"><div class="val">6</div><div class="lbl">Relationship Types</div></div>
+    <div class="metric"><div class="val">550+</div><div class="lbl">Active Nodes</div></div>
+    <div class="metric"><div class="val">10K+</div><div class="lbl">Edges</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Graph Entities (Nodes)</h3><ul><li>Providers -- registered NDIS service organisations</li><li>Participants -- individuals receiving NDIS support</li><li>Workers -- support workers and allied health professionals</li><li>Locations -- SIL houses, offices, community venues</li><li>Services -- specific NDIS service categories</li></ul></div>
+    <div class="card"><h3>Relationship Edges</h3><ul><li>Bills -- provider invoices participant for services</li><li>Employs -- provider engages worker</li><li>Serves -- worker delivers care to participant</li><li>Operates At -- provider operates from location</li><li>Registered With -- worker registered across providers</li><li>Co-attendance -- shared service delivery patterns</li></ul></div>
+  </div>
+
+  <div class="example"><h4>What the Graph Reveals</h4><p>Provider A and Provider B appear independent in a relational database. But the Care Graph shows they share 6 workers, operate from the same address, and bill the same 30 participants. They are operationally one entity hiding behind two registrations -- a pattern invisible without graph analysis.</p></div>
+
+  <div class="card alt"><h3>Technical Implementation</h3><p>Built on NetworkX with directed weighted edges. Node attributes include geographic coordinates, registration data, and entity metadata. Edge weights represent billing volume, service frequency, and employment strength. The graph updates continuously as new claims data arrives, maintaining a real-time representation of the care economy.</p></div>
+</div>
+</section>
+
+<!-- LAYER 2 -->
+<section class="layer-section" id="l2">
+<div class="container">
+  <div class="lh"><div class="lh-num">2</div><div><h2>Temporal Behaviour Engine</h2><div class="subtitle">Behavioural Fingerprint Evolution Over Time</div></div></div>
+  <p class="intro">Layer 2 adds the dimension of time. It doesn't just detect anomalies -- it detects drift. Every provider's behaviour is modeled as a monthly fingerprint across 15+ dimensions. When these fingerprints change faster than any legitimate business evolution could explain, the engine identifies structural impossibility.</p>
+
+  <div class="diagram">
+    <h3>Provider Fingerprint Over Time</h3>
+    <div style="display:flex;justify-content:center;gap:4px;align-items:flex-end;margin:16px 0">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:10px;color:var(--muted)">Jan</div>
+        <div style="width:40px;height:30px;background:rgba(59,130,246,0.15);border-radius:4px;border:1px solid rgba(59,130,246,0.2)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:10px;color:var(--muted)">Feb</div>
+        <div style="width:40px;height:35px;background:rgba(59,130,246,0.2);border-radius:4px;border:1px solid rgba(59,130,246,0.25)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:10px;color:var(--muted)">Mar</div>
+        <div style="width:40px;height:38px;background:rgba(59,130,246,0.25);border-radius:4px;border:1px solid rgba(59,130,246,0.3)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:10px;color:var(--orange);font-weight:700">Apr</div>
+        <div style="width:40px;height:80px;background:rgba(224,122,30,0.2);border-radius:4px;border:2px solid var(--orange)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:10px;color:var(--red);font-weight:700">May</div>
+        <div style="width:40px;height:120px;background:rgba(201,59,59,0.15);border-radius:4px;border:2px solid var(--red)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:10px;color:var(--red);font-weight:700">Jun</div>
+        <div style="width:40px;height:150px;background:rgba(201,59,59,0.2);border-radius:4px;border:2px solid var(--red)"></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">Sudden billing spike after months of stable behaviour = impossible acceleration signal</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="card"><h3>Billing Patterns</h3><ul><li>Avg hours per participant</li><li>Total monthly billing</li><li>Rate per hour trends</li><li>Session length distribution</li></ul></div>
+    <div class="card"><h3>Workforce Metrics</h3><ul><li>Participant-to-worker ratio</li><li>Worker count growth</li><li>Staff turnover patterns</li><li>Multi-provider workers</li></ul></div>
+    <div class="card"><h3>Temporal Signals</h3><ul><li>Peak billing hour shifts</li><li>Weekend ratio changes</li><li>Geographic spread expansion</li><li>Service mix evolution</li></ul></div>
+  </div>
+
+  <div class="example"><h4>Impossible Acceleration Example</h4><p>Provider PRV-0007 had 5 participants and 2 workers in January. By March, they had 60 participants -- but still only 2 workers. That's a 30:1 participant-to-worker ratio, up from 2.5:1. No legitimate provider can serve 30 participants per worker. The Temporal Engine flags this as structurally impossible -- the billing is fabricated.</p></div>
+
+  <div class="example"><h4>Service Mix Drift Example</h4><p>A registered Occupational Therapy provider's monthly fingerprint shows their service mix shifting from 90% OT in January to 15% OT / 70% SIL by June. Legitimate providers don't fundamentally change their service category within 5 months. This semantic role shift indicates either a takeover or opportunistic billing fraud.</p></div>
+</div>
+</section>
+
+<!-- LAYER 3 -->
+<section class="layer-section" id="l3">
+<div class="container">
+  <div class="lh"><div class="lh-num">3</div><div><h2>Care Feasibility Validator</h2><div class="subtitle">Physics-Based Constraint Engine</div></div></div>
+  <p class="intro">Layer 3 asks the most fundamental question: "Is this care delivery physically possible?" It enforces the immutable laws of physics -- a person can only be in one place at a time, a day has exactly 24 hours, and travel between locations takes time. Claims that violate these constraints are fabricated, period.</p>
+
+  <div class="diagram">
+    <h3>Three Constraint Models</h3>
+    <div class="grid-3" style="margin:16px 0 0">
+      <div style="padding:20px;border-radius:12px;background:var(--card-alt);border:1px solid rgba(224,122,30,0.12);text-align:center">
+        <div style="font-size:28px;font-weight:900;color:var(--orange);margin-bottom:4px">T</div>
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px">Time</div>
+        <div style="font-size:12px;color:var(--muted)">Cannot bill more than 24h in a day</div>
+      </div>
+      <div style="padding:20px;border-radius:12px;background:var(--card-alt);border:1px solid rgba(224,122,30,0.12);text-align:center">
+        <div style="font-size:28px;font-weight:900;color:var(--orange);margin-bottom:4px">S</div>
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px">Space</div>
+        <div style="font-size:12px;color:var(--muted)">Cannot be in two places at once</div>
+      </div>
+      <div style="padding:20px;border-radius:12px;background:var(--card-alt);border:1px solid rgba(224,122,30,0.12);text-align:center">
+        <div style="font-size:28px;font-weight:900;color:var(--orange);margin-bottom:4px">D</div>
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px">Distance</div>
+        <div style="font-size:12px;color:var(--muted)">Travel takes measurable time</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric"><div class="val">100</div><div class="lbl">Time Impossibilities</div></div>
+    <div class="metric"><div class="val">50</div><div class="lbl">Excessive Daily Hours</div></div>
+    <div class="metric"><div class="val">50</div><div class="lbl">Travel Impossibilities</div></div>
+    <div class="metric"><div class="val">100</div><div class="lbl">Overservicing Flags</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Worker Constraints</h3><ul><li>Simultaneity: overlapping sessions at different locations</li><li>Daily capacity: total hours exceeding 16h/day</li><li>Travel feasibility: insufficient gap for distance between sessions</li><li>Weekly limits: exceeding 38h/week across all providers</li></ul></div>
+    <div class="card"><h3>Participant Constraints</h3><ul><li>Plan allocation: hours exceeding weekly entitlement</li><li>Budget limits: spending approaching or exceeding plan budget</li><li>Service frequency: sessions beyond clinical justification</li><li>Concurrent services: too many therapy types simultaneously</li></ul></div>
+  </div>
+
+  <div class="example"><h4>Simultaneous Billing Example</h4><p>Worker WRK-0005 is billed for a session in Parramatta from 10:00-13:00 and simultaneously billed for a session in Penrith from 10:30-14:00. These locations are 25km apart. The Feasibility Validator flags this instantly -- one of these sessions is fabricated. The worker cannot physically be in both places.</p></div>
+
+  <div class="example"><h4>Travel Impossibility Example</h4><p>Worker WRK-0013 finishes a session in Liverpool at 14:00 and starts another session in Hornsby at 14:10. These suburbs are 55km apart by road. At 60km/h average urban speed, this journey takes at least 55 minutes. A 10-minute gap is physically impossible -- the Hornsby session is fabricated or the times are falsified.</p></div>
+</div>
+</section>
+
+<!-- LAYER 4 -->
+<section class="layer-section" id="l4">
+<div class="container">
+  <div class="lh"><div class="lh-num">4</div><div><h2>Graph AI Risk Engine</h2><div class="subtitle">Machine Learning on Graph Structures</div></div></div>
+  <p class="intro">Layer 4 is where artificial intelligence meets graph theory. Every provider is converted into a high-dimensional behaviour vector (embedding). Graph Neural Network techniques then detect patterns that no human analyst and no rule-based system could find -- collusive clusters, synthetic behaviour patterns, and abnormal network centrality shifts.</p>
+
+  <div class="diagram">
+    <h3>From Raw Data to Risk Intelligence</h3>
+    <div class="flow">
+      <div class="flow-node provider">Claims Data</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node worker">Feature Extraction</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node participant">35-Dim Embedding</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node location">PCA / Clustering</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node alert">Risk Score</div>
+    </div>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric"><div class="val">35</div><div class="lbl">Embedding Dimensions</div></div>
+    <div class="metric"><div class="val">60</div><div class="lbl">Provider Vectors</div></div>
+    <div class="metric"><div class="val">30</div><div class="lbl">Mutations Detected</div></div>
+    <div class="metric"><div class="val">170</div><div class="lbl">Cluster Anomalies</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><h3>Technology Stack</h3><ul><li>Graph Neural Networks (GNN) architecture</li><li>Node embeddings (provider behaviour vectors)</li><li>Unsupervised anomaly detection</li><li>Community detection (Louvain / spectral clustering)</li><li>PCA with force-spread for 2D visualisation</li><li>Cosine and Euclidean distance metrics</li></ul></div>
+    <div class="card"><h3>What It Detects</h3><ul><li>Collusive provider clusters (shared infrastructure)</li><li>Abnormal network centrality shifts</li><li>Synthetic-looking provider behaviour patterns</li><li>Behavioural mutations (sudden DNA shifts)</li><li>Providers clustering with known fraud entities</li><li>Emergent fraud patterns invisible to rules</li></ul></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card alt"><h3>Embedding Features (35 dimensions)</h3><ul><li>Service mix proportions (12 NDIS categories)</li><li>Participant demographics served (7 disability types)</li><li>Session duration and rate statistics</li><li>Weekend and night billing ratios</li><li>Geographic spread and billing intensity</li><li>Time distribution entropy (8 bins)</li><li>Rate and duration variance measures</li></ul></div>
+    <div class="card alt"><h3>Risk Intelligence Outputs</h3><ul><li>Provider Risk Score: 0-100 composite across all layers</li><li>Network Cluster Risk Index: community-level assessment</li><li>Behavioural Drift Score: temporal deviation from baseline</li><li>Constraint Violation Events: real-time impossibility flags</li></ul><p style="margin-top:12px;font-weight:700;color:var(--orange);font-size:13px">Integrates via real-time API or batch pipelines -- no rip-and-replace required.</p></div>
+  </div>
+
+  <div class="example"><h4>Cluster Anomaly Example</h4><p>The Graph AI Risk Engine identifies that Provider PRV-0023 has a cosine similarity of 0.92 with known fraud provider PRV-0003. Their embeddings are nearly identical -- same service mix, same billing patterns, same time-of-day distribution, same geographic spread. PRV-0023 was not previously flagged, but its behaviour DNA is a near-perfect match for a confirmed fraudulent entity. This triggers automatic investigation.</p></div>
+</div>
+</section>
+
+<div class="cta-bar">
+  <h2>See All 4 Layers Working Together</h2>
+  <p style="font-size:16px;color:var(--muted);margin-bottom:12px">Live demo with real detection across all layers -- from graph construction to risk scoring.</p>
+  <a href="https://demo.careintegrity.ai" class="btn">Access Live Demo</a>
+  <div style="margin-top:12px;font-size:13px;color:var(--muted)">Login: admin / NDISAdmin2025!</div>
+</div>
+
+<footer>
+  <div class="logo">Care<span>Integrity</span>.ai</div>
+  <p>Strengthening Trust, Sustainability and Integrity in the NDIS</p>
+  <p style="margin-top:12px">&copy; 2026 CareIntegrity.ai -- Built in Australia</p>
+</footer>
+
+</body>
+</html>
