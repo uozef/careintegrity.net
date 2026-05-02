@@ -81,23 +81,26 @@ export default function RiskHeatmap() {
         ctx.fillText(name, toX(lng), toY(lat))
       })
 
+      // Risk color function: green -> yellow -> orange -> red
+      function riskColor(rs) {
+        if (rs >= 0.8) return { main: [220,38,38], light: '#f87171', dark: '#dc2626' }     // red
+        if (rs >= 0.65) return { main: [239,68,68], light: '#fca5a5', dark: '#ef4444' }     // lighter red
+        if (rs >= 0.5) return { main: [249,115,22], light: '#fdba74', dark: '#f97316' }     // orange
+        if (rs >= 0.35) return { main: [234,179,8], light: '#fde047', dark: '#eab308' }     // yellow
+        if (rs >= 0.2) return { main: [34,197,94], light: '#86efac', dark: '#22c55e' }      // light green
+        return { main: [16,185,129], light: '#6ee7b7', dark: '#10b981' }                    // green
+      }
+
       // Heatmap glow (larger, softer)
       for (const p of pts) {
-        const r = (20 + p.risk_score * 50) / t.scale * t.scale
+        const r = (15 + p.risk_score * 50) / t.scale * t.scale
+        const rc = riskColor(p.risk_score)
+        const [cr, cg, cb] = rc.main
         const grad = ctx.createRadialGradient(p.sx, p.sy, 0, p.sx, p.sy, r)
-        if (p.risk_score > 0.7) {
-          grad.addColorStop(0, 'rgba(220,38,38,0.35)')
-          grad.addColorStop(0.5, 'rgba(220,38,38,0.1)')
-          grad.addColorStop(1, 'rgba(220,38,38,0)')
-        } else if (p.risk_score > 0.4) {
-          grad.addColorStop(0, 'rgba(234,88,12,0.3)')
-          grad.addColorStop(0.5, 'rgba(234,88,12,0.08)')
-          grad.addColorStop(1, 'rgba(234,88,12,0)')
-        } else {
-          grad.addColorStop(0, 'rgba(234,179,8,0.25)')
-          grad.addColorStop(0.5, 'rgba(234,179,8,0.06)')
-          grad.addColorStop(1, 'rgba(234,179,8,0)')
-        }
+        const intensity = 0.15 + p.risk_score * 0.25
+        grad.addColorStop(0, `rgba(${cr},${cg},${cb},${intensity})`)
+        grad.addColorStop(0.5, `rgba(${cr},${cg},${cb},${intensity * 0.3})`)
+        grad.addColorStop(1, `rgba(${cr},${cg},${cb},0)`)
         ctx.fillStyle = grad
         ctx.beginPath(); ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2); ctx.fill()
       }
@@ -109,7 +112,8 @@ export default function RiskHeatmap() {
         const baseR = 4 + p.risk_score * 8
         const r = isSelected ? baseR * 1.6 : isHovered ? baseR * 1.3 : baseR
 
-        const color = p.risk_score > 0.7 ? '#dc2626' : p.risk_score > 0.4 ? '#ea580c' : '#d97706'
+        const rc = riskColor(p.risk_score)
+        const color = rc.dark
 
         // Selection/hover ring
         if (isSelected || isHovered) {
@@ -120,7 +124,7 @@ export default function RiskHeatmap() {
 
         // Dot with gradient
         const g = ctx.createRadialGradient(p.sx - r * 0.2, p.sy - r * 0.2, r * 0.1, p.sx, p.sy, r)
-        g.addColorStop(0, color === '#dc2626' ? '#f87171' : color === '#ea580c' ? '#fb923c' : '#fbbf24')
+        g.addColorStop(0, rc.light)
         g.addColorStop(1, color)
         ctx.beginPath(); ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2)
         ctx.fillStyle = g; ctx.fill()
@@ -248,7 +252,7 @@ export default function RiskHeatmap() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
         <div style={{ display: 'flex', gap: 16 }}>
-          {[['Critical Risk', '#dc2626'], ['High Risk', '#ea580c'], ['Medium Risk', '#d97706']].map(([l, c]) => (
+          {[['Critical', '#dc2626'], ['High', '#ef4444'], ['Medium', '#f97316'], ['Elevated', '#eab308'], ['Low', '#22c55e'], ['Clean', '#10b981']].map(([l, c]) => (
             <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)' }}>
               <div style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />{l}
             </div>
@@ -349,7 +353,7 @@ export default function RiskHeatmap() {
                 <td><div style={{ fontWeight: 700 }}>{p.name}</div><div style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--text-muted)' }}>{p.id}</div></td>
                 <td style={{ fontSize: 12, color: 'var(--text-secondary)', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.address}</td>
                 <td><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div className="progress-bar" style={{ width: 40 }}><div className="progress-fill" style={{ width: `${p.risk_score*100}%`, background: p.risk_score>0.7?'#dc2626':p.risk_score>0.4?'#ea580c':'#d97706' }} /></div>
+                  <div className="progress-bar" style={{ width: 40 }}><div className="progress-fill" style={{ width: `${p.risk_score*100}%`, background: p.risk_score>=0.65?'#dc2626':p.risk_score>=0.5?'#f97316':p.risk_score>=0.35?'#eab308':p.risk_score>=0.2?'#22c55e':'#10b981' }} /></div>
                   <span style={{ fontSize: 12, fontWeight: 700, color: p.risk_score>0.7?'var(--accent-red)':'var(--accent-orange)' }}>{(p.risk_score*100).toFixed(0)}%</span>
                 </div></td>
                 <td style={{ fontWeight: 600 }}>{p.alerts}</td>

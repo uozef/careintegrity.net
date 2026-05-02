@@ -361,22 +361,21 @@ def get_system_health(state):
 # ==================== GEOGRAPHIC RISK ====================
 
 def get_risk_heatmap(providers, risk_agg):
-    """Generate geographic risk data for heatmap visualization."""
+    """Generate geographic risk data for heatmap visualization — includes ALL providers."""
     points = []
     for p in providers:
         risk = risk_agg.get(p["id"], {})
         rs = risk.get("risk_score", 0)
-        if rs > 0:
-            points.append({
-                "id": p["id"],
-                "name": p["name"],
-                "lat": p["lat"],
-                "lng": p["lng"],
-                "risk_score": rs,
-                "alerts": risk.get("alerts", 0),
-                "severity": risk.get("max_severity", "low"),
-                "address": p["address"],
-            })
+        points.append({
+            "id": p["id"],
+            "name": p["name"],
+            "lat": p["lat"],
+            "lng": p["lng"],
+            "risk_score": rs,
+            "alerts": risk.get("alerts", 0),
+            "severity": risk.get("max_severity", "none"),
+            "address": p["address"],
+        })
     return sorted(points, key=lambda x: x["risk_score"], reverse=True)
 
 
