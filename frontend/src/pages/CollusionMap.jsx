@@ -41,11 +41,13 @@ export default function CollusionMap() {
 
     const graphData = {
       nodes: nodes.map(n => {
-        const dr = (n.weighted_degree || 1) / maxDegree
+        const rs = n.risk_score || 0
+        const color = rs >= 0.8 ? '#dc2626' : rs >= 0.65 ? '#ef4444' : rs >= 0.5 ? '#f97316' : rs >= 0.35 ? '#eab308' : rs >= 0.2 ? '#22c55e' : '#10b981'
         return {
           id: n.id, name: n.name || n.id, weighted_degree: n.weighted_degree || 0,
-          color: dr > 0.5 ? '#ef4444' : dr > 0.3 ? '#f97316' : '#3b82f6',
-          size: 3 + dr * 18,
+          risk_score: rs, alert_count: n.alert_count || 0, max_severity: n.max_severity || 'none',
+          color,
+          size: 3 + (n.weighted_degree || 1) / maxDegree * 18,
         }
       }),
       links: edges.map(e => ({
@@ -73,7 +75,7 @@ export default function CollusionMap() {
         .width(el.offsetWidth || 800)
         .height(560)
         .nodeVal(n => n.size * n.size)
-        .nodeLabel(n => `<div style="background:rgba(0,0,0,0.8);color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-family:sans-serif"><b>${n.name}</b><br/>${n.id}<br/>Connections: ${n.weighted_degree}</div>`)
+        .nodeLabel(n => `<div style="background:rgba(0,0,0,0.85);color:#fff;padding:10px 14px;border-radius:10px;font-size:12px;font-family:sans-serif;min-width:180px;box-shadow:0 4px 20px rgba(0,0,0,0.3)"><b style="font-size:14px">${n.name}</b><br/><span style="opacity:0.7;font-family:monospace;font-size:11px">${n.id}</span><br/><span style="color:${n.color}">Risk: ${(n.risk_score*100).toFixed(0)}%</span> &middot; Alerts: ${n.alert_count}<br/>Connections: ${n.weighted_degree}<br/><span style="opacity:0.5;font-size:10px">Click to inspect</span></div>`)
         .nodeColor(n => n.color)
         .nodeOpacity(0.9)
         .nodeResolution(12)

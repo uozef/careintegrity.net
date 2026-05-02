@@ -1221,8 +1221,17 @@ def get_service_codes(current_user: User = Depends(get_current_user)):
 
 @app.get("/api/collusion")
 def get_collusion(current_user: User = Depends(get_current_user)):
+    network = state.get("collusion_network", {})
+    risk_agg = state.get("provider_risk_agg", {})
+    # Inject risk scores into network nodes
+    if network.get("nodes"):
+        for node in network["nodes"]:
+            r = risk_agg.get(node["id"], {})
+            node["risk_score"] = r.get("risk_score", 0)
+            node["alert_count"] = r.get("alerts", 0)
+            node["max_severity"] = r.get("max_severity", "none")
     return {
-        "network": state.get("collusion_network", {}),
+        "network": network,
         "cartels": state.get("cartels", []),
         "referral_loops": state.get("referral_loops", []),
     }
