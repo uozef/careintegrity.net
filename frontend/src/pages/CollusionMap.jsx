@@ -5,6 +5,7 @@ import ForceGraph3D from '3d-force-graph'
 export default function CollusionMap() {
   const containerRef = useRef(null)
   const graphRef = useRef(null)
+  const rotateRef = useRef(null)
   const [selectedNode, setSelectedNode] = useState(null)
   const [nodeDetail, setNodeDetail] = useState(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
@@ -15,16 +16,15 @@ export default function CollusionMap() {
     setLoadingDetail(true)
     try {
       const detail = await fetchApi(`/providers/${nodeId}`)
-      const edges = (data?.network?.edges || []).filter(e => e.source?.id === nodeId || e.target?.id === nodeId || e.source === nodeId || e.target === nodeId)
-      const partners = edges.map(e => {
-        const sid = typeof e.source === 'object' ? e.source.id : e.source
-        const tid = typeof e.target === 'object' ? e.target.id : e.target
-        return {
-          partner: sid === nodeId ? tid : sid,
+      const rawEdges = data?.network?.edges || []
+      const partners = rawEdges
+        .filter(e => e.source === nodeId || e.target === nodeId)
+        .map(e => ({
+          partner: e.source === nodeId ? e.target : e.source,
           weight: e.weight, shared_staff: e.shared_staff,
           shared_participants: e.shared_participants, shared_locations: e.shared_locations,
-        }
-      }).sort((a, b) => b.weight - a.weight)
+        }))
+        .sort((a, b) => b.weight - a.weight)
       setNodeDetail({ ...detail, collusionPartners: partners })
     } catch { setNodeDetail(null) }
     setLoadingDetail(false)
@@ -35,137 +35,115 @@ export default function CollusionMap() {
     const { nodes, edges } = data.network
     if (!nodes?.length) return
 
+    const el = containerRef.current
     const maxDegree = Math.max(...nodes.map(n => n.weighted_degree || 1))
     const maxWeight = Math.max(...edges.map(e => e.weight || 1), 1)
 
-    // Build graph data
     const graphData = {
       nodes: nodes.map(n => {
         const dr = (n.weighted_degree || 1) / maxDegree
         return {
-          id: n.id,
-          name: n.name || n.id,
-          weighted_degree: n.weighted_degree || 0,
-          degreeRatio: dr,
+          id: n.id, name: n.name || n.id, weighted_degree: n.weighted_degree || 0,
           color: dr > 0.5 ? '#ef4444' : dr > 0.3 ? '#f97316' : '#3b82f6',
           size: 3 + dr * 18,
         }
       }),
       links: edges.map(e => ({
-        source: e.source,
-        target: e.target,
-        weight: e.weight || 1,
-        shared_staff: e.shared_staff || 0,
-        shared_participants: e.shared_participants || 0,
+        source: e.source, target: e.target, weight: e.weight || 1,
+        shared_staff: e.shared_staff || 0, shared_participants: e.shared_participants || 0,
         shared_locations: e.shared_locations || 0,
-        color: e.shared_staff > 0 && e.shared_staff >= e.shared_participants
-          ? 'rgba(239,68,68,0.4)'
-          : e.shared_locations > 0 && e.shared_locations >= e.shared_participants
-          ? 'rgba(245,158,11,0.4)'
-          : 'rgba(59,130,246,0.2)',
+        color: e.shared_staff > 0 && e.shared_staff >= e.shared_participants ? 'rgba(239,68,68,0.4)'
+          : e.shared_locations > 0 ? 'rgba(245,158,11,0.4)' : 'rgba(59,130,246,0.2)',
       })),
     }
 
-    // Clear previous
+    // Clean up previous instance
     if (graphRef.current) {
-      graphRef.current._destructor?.()
-      containerRef.current.innerHTML = ''
+      try { graphRef.current.pauseAnimation() } catch {}
+      graphRef.current = null
+    }
+    el.innerHTML = ''
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+
+    try {
+      const Graph = ForceGraph3D()(el)
+        .graphData(graphData)
+        .backgroundColor(isDark ? '#0a0c14' : '#f0f2f8')
+        .width(el.offsetWidth || 800)
+        .height(560)
+        .nodeVal(n => n.size * n.size)
+        .nodeLabel(n => `<div style="background:rgba(0,0,0,0.8);color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-family:sans-serif"><b>${n.name}</b><br/>${n.id}<br/>Connections: ${n.weighted_degree}</div>`)
+        .nodeColor(n => n.color)
+        .nodeOpacity(0.9)
+        .nodeResolution(12)
+        .linkWidth(l => 0.5 + (l.weight / maxWeight) * 3)
+        .linkColor(l => l.color)
+        .linkOpacity(0.5)
+        .linkDirectionalParticles(l => l.shared_staff > 0 ? 2 : 0)
+        .linkDirectionalParticleWidth(1.5)
+        .linkDirectionalParticleSpeed(0.005)
+        .linkDirectionalParticleColor(() => '#ef4444')
+        .onNodeClick(node => {
+          if (!node) return
+          setSelectedNode(prev => {
+            const newSel = prev === node.id ? null : node.id
+            if (newSel) {
+              fetchDetail(node.id)
+              try {
+                const dist = 200
+                const hp = Math.hypot(node.x || 0, node.y || 0, node.z || 0) || 1
+                const ratio = 1 + dist / hp
+                Graph.cameraPosition(
+                  { x: (node.x || 0) * ratio, y: (node.y || 0) * ratio, z: (node.z || 0) * ratio },
+                  { x: node.x || 0, y: node.y || 0, z: node.z || 0 },
+                  1200
+                )
+              } catch {}
+            } else {
+              setNodeDetail(null)
+            }
+            return newSel
+          })
+        })
+        .onNodeHover(node => { el.style.cursor = node ? 'pointer' : 'grab' })
+
+      // Configure forces
+      try {
+        Graph.d3Force('charge').strength(-100)
+        Graph.d3Force('link').distance(l => 50 + (1 - (l.weight || 0) / maxWeight) * 80)
+      } catch {}
+
+      graphRef.current = Graph
+
+      // Gentle auto-rotation
+      let angle = 0
+      let rotating = true
+      rotateRef.current = setInterval(() => {
+        if (!rotating || !graphRef.current) return
+        try {
+          angle += 0.003
+          graphRef.current.cameraPosition({ x: 350 * Math.sin(angle), z: 350 * Math.cos(angle) })
+        } catch {}
+      }, 40)
+
+      const stopRotation = () => { rotating = false }
+      el.addEventListener('mousedown', stopRotation)
+      el.addEventListener('touchstart', stopRotation)
+
+    } catch (err) {
+      console.error('3D graph init error:', err)
+      el.innerHTML = '<div style="padding:40px;text-align:center;color:#888">3D graph failed to load. Try refreshing.</div>'
     }
 
-    // Detect theme
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
-    const bgColor = isDark ? '#0a0c14' : '#f0f2f8'
-
-    const Graph = ForceGraph3D()(containerRef.current)
-      .graphData(graphData)
-      .backgroundColor(bgColor)
-      .width(containerRef.current.offsetWidth)
-      .height(560)
-      .nodeVal(n => n.size * n.size)
-      .nodeLabel(n => `${n.name} (${n.id})\nConnections: ${n.weighted_degree}`)
-      .nodeColor(n => {
-        if (selectedNode === n.id) return '#ffffff'
-        return n.color
-      })
-      .nodeOpacity(0.92)
-      .nodeResolution(16)
-      .linkWidth(l => 0.5 + (l.weight / maxWeight) * 3)
-      .linkColor(l => l.color)
-      .linkOpacity(0.6)
-      .linkDirectionalParticles(l => l.shared_staff > 0 ? 2 : 0)
-      .linkDirectionalParticleWidth(1.5)
-      .linkDirectionalParticleSpeed(0.005)
-      .linkDirectionalParticleColor(l => l.shared_staff > 0 ? '#ef4444' : '#3b82f6')
-      .onNodeClick(node => {
-        setSelectedNode(prev => prev === node.id ? null : node.id)
-        if (node.id !== selectedNode) {
-          fetchDetail(node.id)
-          // Focus camera on node
-          const distance = 180
-          const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z)
-          Graph.cameraPosition(
-            { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-            node,
-            1500
-          )
-        } else {
-          setNodeDetail(null)
-        }
-      })
-      .onNodeHover(node => {
-        containerRef.current.style.cursor = node ? 'pointer' : 'grab'
-      })
-      .d3Force('charge').strength(-120)
-
-    // Set link force distance based on weight
-    Graph.d3Force('link').distance(l => 60 + (1 - l.weight / maxWeight) * 100)
-
-    graphRef.current = Graph
-
-    // Auto-rotate slowly
-    let angle = 0
-    const rotateInterval = setInterval(() => {
-      if (!graphRef.current) return
-      angle += 0.002
-      Graph.cameraPosition({
-        x: 300 * Math.sin(angle),
-        z: 300 * Math.cos(angle),
-      })
-    }, 30)
-
-    // Stop rotation on user interaction
-    const stopRotation = () => clearInterval(rotateInterval)
-    containerRef.current.addEventListener('mousedown', stopRotation, { once: true })
-    containerRef.current.addEventListener('touchstart', stopRotation, { once: true })
-
     return () => {
-      clearInterval(rotateInterval)
+      if (rotateRef.current) clearInterval(rotateRef.current)
       if (graphRef.current) {
-        graphRef.current._destructor?.()
+        try { graphRef.current.pauseAnimation() } catch {}
         graphRef.current = null
       }
     }
   }, [data])
-
-  // Update node colors when selection changes
-  useEffect(() => {
-    if (graphRef.current) {
-      graphRef.current.nodeColor(n => {
-        if (selectedNode === n.id) return '#ffffff'
-        if (selectedNode) {
-          // Check if connected
-          const links = graphRef.current.graphData().links
-          const connected = links.some(l => {
-            const sid = typeof l.source === 'object' ? l.source.id : l.source
-            const tid = typeof l.target === 'object' ? l.target.id : l.target
-            return (sid === selectedNode && tid === n.id) || (tid === selectedNode && sid === n.id)
-          })
-          if (!connected) return n.color + '30'
-        }
-        return n.color
-      })
-    }
-  }, [selectedNode])
 
   if (loading) return <div className="loading"><div className="loading-spinner" />Loading collusion map...</div>
 
@@ -177,7 +155,7 @@ export default function CollusionMap() {
     <div>
       <div className="page-header">
         <h2>3D Collusion Detection Map</h2>
-        <p>WebGL-powered 3D graph -- drag to orbit, scroll to zoom, click nodes to inspect collusion links</p>
+        <p>WebGL 3D graph -- drag to orbit, scroll to zoom, click nodes to inspect collusion links</p>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -231,7 +209,7 @@ export default function CollusionMap() {
                     <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 8 }}>
                       Collusion Partners ({detail.collusionPartners.length})
                     </div>
-                    {detail.collusionPartners.slice(0, 15).map((p, i) => (
+                    {detail.collusionPartners.slice(0, 12).map((p, i) => (
                       <div key={i} onClick={() => { setSelectedNode(p.partner); fetchDetail(p.partner) }}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', marginBottom: 4,
                           background: 'var(--bg-secondary)', borderRadius: 8, border: '1px solid var(--border)', fontSize: 12, cursor: 'pointer', transition: 'all 0.15s' }}
