@@ -441,8 +441,8 @@ export default function NetworkGraph() {
                 {d.address && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{d.address}</div>}
               </div>
               <div style={{ display: 'flex', gap: 4 }}>
-                <button className="btn sm primary" onClick={() => runAnalysis(d.id)} disabled={analysing} style={{ fontWeight: 700 }}>
-                  {analysing ? 'Analysing...' : showAnalysis ? 'Re-Analyse' : 'Analyse'}
+                <button className="btn sm primary" onClick={() => runAnalysis(d.id)} disabled={analysing} style={{ fontWeight: 700, animation: showAnalysis ? 'none' : 'pulse-badge 2s infinite' }}>
+                  {analysing ? 'Running Detection...' : showAnalysis ? 'Re-run Detection' : 'Run Detection'}
                 </button>
                 <button className="btn sm" onClick={() => selectNode(null)}>&times;</button>
               </div>
@@ -454,8 +454,8 @@ export default function NetworkGraph() {
                 {analysing ? (
                   <div style={{ padding: 24, textAlign: 'center' }}>
                     <div className="loading-spinner" style={{ margin: '0 auto 12px', width: 24, height: 24 }} />
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Running anomaly detection across all engines...</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>Checking billing patterns, time constraints, network links, behavioural drift...</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Running anomaly detection on {d?.name || 'entity'}...</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>Scanning billing patterns, time constraints, network links, behavioural drift</div>
                   </div>
                 ) : analysisResult && (
                   <div className="fade-in">
