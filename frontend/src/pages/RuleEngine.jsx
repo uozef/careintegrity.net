@@ -18,6 +18,8 @@ export default function RuleEngine() {
   const [expandedRule, setExpandedRule] = useState(null)
   const [ruleResults, setRuleResults] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [rulePage, setRulePage] = useState(0)
+  const RULES_PER_PAGE = 10
 
   const emptyRule = {
     name: '', description: '', category: 'Custom', enabled: true,
@@ -124,7 +126,7 @@ export default function RuleEngine() {
         </div>
         <div className="stat-card">
           <div className="stat-label">Flagged Amount</div>
-          <div className="stat-value critical">${(statsData.reduce((s, r) => s + r.total_amount, 0) / 1000).toFixed(0)}K</div>
+          <div className="stat-value critical">{(() => { const v = statsData.reduce((s, r) => s + r.total_amount, 0); return v >= 1e6 ? `$${(v/1e6).toFixed(1)}M` : `$${(v/1e3).toFixed(0)}K` })()}</div>
         </div>
       </div>
 
@@ -259,7 +261,7 @@ export default function RuleEngine() {
 
       {/* Rules Table */}
       <div className="card">
-        <div className="card-title">Detection Rules</div>
+        <div className="card-title">Detection Rules ({rulesData.length})</div>
         <div className="table-container">
           <table>
             <thead>
@@ -276,7 +278,7 @@ export default function RuleEngine() {
               </tr>
             </thead>
             <tbody>
-              {rulesData.map(rule => {
+              {rulesData.slice(rulePage * RULES_PER_PAGE, (rulePage + 1) * RULES_PER_PAGE).map(rule => {
                 const stat = statsData.find(s => s.rule_id === rule.id) || {}
                 return (
                   <tr key={rule.id}>
@@ -323,7 +325,7 @@ export default function RuleEngine() {
                       {(stat.matches || 0).toLocaleString()}
                     </td>
                     <td style={{ fontWeight: 600, color: 'var(--accent-red)', fontSize: 12 }}>
-                      ${((stat.total_amount || 0) / 1000).toFixed(0)}K
+                      {(() => { const v = stat.total_amount || 0; return v >= 1e6 ? `$${(v/1e6).toFixed(1)}M` : `$${(v/1e3).toFixed(0)}K` })()}
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 4 }}>
@@ -337,6 +339,13 @@ export default function RuleEngine() {
             </tbody>
           </table>
         </div>
+        {rulesData.length > RULES_PER_PAGE && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 14 }}>
+            <button className="btn sm" disabled={rulePage === 0} onClick={() => setRulePage(p => p - 1)}>Previous</button>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Page {rulePage + 1} of {Math.ceil(rulesData.length / RULES_PER_PAGE)}</span>
+            <button className="btn sm" disabled={(rulePage + 1) * RULES_PER_PAGE >= rulesData.length} onClick={() => setRulePage(p => p + 1)}>Next</button>
+          </div>
+        )}
       </div>
     </div>
   )
