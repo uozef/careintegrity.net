@@ -27,6 +27,7 @@ const NAV_ITEMS = [
   {
     section: 'Investigation',
     items: [
+      { id: 'pattern-search', icon: '\u2318', label: 'Pattern Search' },
       { id: 'fraud-cases', icon: '\u2620', label: 'Fraud Cases' },
       { id: 'investigation', icon: '\u2609', label: 'Provider Explorer' },
       { id: 'search', icon: '\u2315', label: 'Search Portal' },

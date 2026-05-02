@@ -29,6 +29,7 @@ import Tipoffs from './pages/Tipoffs'
 import SystemHealth from './pages/SystemHealth'
 import RiskHeatmap from './pages/RiskHeatmap'
 import SystemSettings from './pages/SystemSettings'
+import PatternSearch from './pages/PatternSearch'
 
 export const ThemeContext = createContext()
 
@@ -91,6 +92,7 @@ export default function App() {
       case 'system-health': return <SystemHealth />
       case 'risk-heatmap': return <RiskHeatmap />
       case 'settings': return <SystemSettings />
+      case 'pattern-search': return <PatternSearch />
       default: return <Dashboard onNavigate={navigate} />
     }
   }

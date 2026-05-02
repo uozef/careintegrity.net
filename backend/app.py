@@ -26,6 +26,7 @@ from auth import (
 )
 from fines import FinesManager
 from rules import RuleEngine
+from pattern_search import search_fraud_pattern, save_scenario, get_saved_scenarios, delete_scenario, increment_scenario_run
 from enterprise import (
     add_to_watchlist, get_watchlist, update_watchlist_entry, add_watchlist_note,
     create_notification, get_notifications, mark_notification_read,
@@ -1486,6 +1487,45 @@ def re_evaluate_rules(current_user: User = Depends(get_current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     return rule_engine.evaluate_all_claims(state.get("claims", []))
+
+
+# ==================== PATTERN SEARCH ROUTES ====================
+
+class PatternSearchRequest(BaseModel):
+    query: str
+
+@app.post("/api/pattern-search")
+def api_pattern_search(req: PatternSearchRequest, current_user: User = Depends(get_current_user)):
+    check_permission(current_user, "investigation.conduct")
+    return search_fraud_pattern(req.query, state.get("claims", []), state.get("providers", []),
+                                state.get("workers", []), state.get("participants", []),
+                                state.get("provider_risk_agg", {}))
+
+@app.get("/api/scenarios")
+def api_get_scenarios(current_user: User = Depends(get_current_user)):
+    return get_saved_scenarios()
+
+class SaveScenarioRequest(BaseModel):
+    name: str
+    query: str
+
+@app.post("/api/scenarios")
+def api_save_scenario(req: SaveScenarioRequest, current_user: User = Depends(get_current_user)):
+    return save_scenario(req.name, req.query, current_user.username)
+
+@app.delete("/api/scenarios/{scenario_id}")
+def api_delete_scenario(scenario_id: str, current_user: User = Depends(get_current_user)):
+    delete_scenario(scenario_id)
+    return {"message": "Deleted"}
+
+@app.post("/api/scenarios/{scenario_id}/run")
+def api_run_scenario(scenario_id: str, current_user: User = Depends(get_current_user)):
+    scenario = increment_scenario_run(scenario_id)
+    if not scenario:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    return search_fraud_pattern(scenario["query"], state.get("claims", []), state.get("providers", []),
+                                state.get("workers", []), state.get("participants", []),
+                                state.get("provider_risk_agg", {}))
 
 
 # ==================== ENTERPRISE ROUTES ====================
